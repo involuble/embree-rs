@@ -1,0 +1,13 @@
+[package]
+name = "embree-sys"
+version = "0.1.0"
+authors = ["Steven <locke9@gmail.com>"]
+build = "build.rs"
+
+[build-dependencies]
+bindgen = { version = "0.33", optional = true }
+cmake = { version = "0.1.29", optional = true }
+
+[features]
+default = []
+use-bindgen = ["bindgen"]

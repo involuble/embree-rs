@@ -1,0 +1,10 @@
+[package]
+name = "embree"
+version = "0.1.0"
+authors = ["Steven <locke9@gmail.com>"]
+
+[dependencies]
+embree-sys = { path = "embree-sys" }
+mint = "0.5"
+bitflags = "1.0"
+#smallvec = "0.6"
