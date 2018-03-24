@@ -1,39 +1,46 @@
-use std::mem;
-
 use sys::*;
 
+use device::Device;
+
 pub struct Scene {
-    pub(crate) scene_handle: RTCScene;
-    pub device: Device;
+    // TODO
+    #[allow(dead_code)]
+    pub(crate) handle: SceneHandle,
 }
 
 pub struct SceneBuilder {
-    pub(crate) scene_handle: RTCScene;
-    pub device: Device;
+    pub(crate) handle: SceneHandle,
 }
 
-#[repr(i32)]
-#[derive(Debug, Copy, Clone)]
-pub enum SceneBuildQuality {
-    Low = RTCBuildQuality_RTC_BUILD_QUALITY_LOW,
-    Medium = RTCBuildQuality_RTC_BUILD_QUALITY_MEDIUM,
-    High = RTCBuildQuality_RTC_BUILD_QUALITY_HIGH,
+#[repr(C)]
+pub struct SceneHandle {
+    pub(crate) ptr: RTCScene,
 }
 
-bitflags! {
-    struct SceneFlags: u32 {
-        const DYNAMIC = RTCSceneFlags_RTC_SCENE_FLAG_DYNAMIC;
-        const COMPACT = RTCSceneFlags_RTC_SCENE_FLAG_COMPACT;
-        const ROBUST  = RTCSceneFlags_RTC_SCENE_FLAG_ROBUST;
+impl SceneHandle {
+    pub(crate) fn new(device: &Device) -> Self {
+        let h = unsafe { rtcNewScene(device.ptr) };
+        SceneHandle { ptr: h }
+    }
+}
+
+impl Clone for SceneHandle {
+    fn clone(&self) -> SceneHandle {
+        unsafe { rtcRetainScene(self.ptr) }
+        SceneHandle { ptr: self.ptr }
+    }
+}
+
+impl Drop for SceneHandle {
+    fn drop(&mut self) {
+        unsafe { rtcReleaseScene(self.ptr) }
     }
 }
 
 impl SceneBuilder {
-    pub fn new(device: Device) {
-        let raw = unsafe { rtcNewScene(device.raw_device) };
+    pub fn new(device: &Device) -> Self {
         SceneBuilder {
-            scene_handle: raw,
-            device: device
+            handle: SceneHandle::new(device),
         }
     }
 
@@ -41,34 +48,40 @@ impl SceneBuilder {
         
     // }
 
-    pub fn set_build_quality(&self, quality: SceneBuildQuality) {
-        unsafe { rtcSetSceneBuildQuality(self.scene_handle, quality); }
+    pub fn set_build_quality(&self, quality: BuildQuality) {
+        unsafe { rtcSetSceneBuildQuality(self.handle.ptr, quality.into()); }
     }
 
     pub fn commit(self) -> Scene {
-        unsafe { rtcCommitScene(self.scene_handle); }
-        mem::forget(self);
+        unsafe {
+            rtcCommitScene(self.handle.ptr);
+        }
         Scene {
-            scene_handle: self.scene_handle,
-            device: self.device
+            handle: self.handle,
         }
     }
 }
 
 impl Scene {
-    pub fn intersect(&self) {
+    // pub fn intersect(&self) {
 
-    }
+    // }
 }
 
-impl Drop for SceneBuilder {
-    fn drop(&mut self) {
-        unsafe { rtcReleaseScene(self.scene_handle); }
-    }
+#[repr(i32)]
+#[derive(Debug, Copy, Clone)]
+pub enum BuildQuality {
+    Low = RTCBuildQuality_RTC_BUILD_QUALITY_LOW,
+    Medium = RTCBuildQuality_RTC_BUILD_QUALITY_MEDIUM,
+    High = RTCBuildQuality_RTC_BUILD_QUALITY_HIGH,
 }
 
-impl Drop for Scene {
-    fn drop(&mut self) {
-        unsafe { rtcReleaseScene(self.scene_handle); }
+into_primitive!(BuildQuality, i32);
+
+bitflags! {
+    struct SceneFlags: i32 {
+        const DYNAMIC = RTCSceneFlags_RTC_SCENE_FLAG_DYNAMIC;
+        const COMPACT = RTCSceneFlags_RTC_SCENE_FLAG_COMPACT;
+        const ROBUST  = RTCSceneFlags_RTC_SCENE_FLAG_ROBUST;
     }
 }

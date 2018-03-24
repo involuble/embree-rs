@@ -1,30 +1,38 @@
 use std::ptr;
+use std::os::raw::{c_char, c_void};
+use std::ffi::CStr;
 
 use sys::*;
 
+use error::*;
+
 pub struct Device {
-    pub(crate) device_handle: RTCDevice;
+    pub(crate) ptr: RTCDevice,
 }
 
 impl Device {
     pub fn new() -> Self {
         let device = unsafe { rtcNewDevice(ptr::null()) };
-        Device { device_handle: device }
+        let user = ptr::null_mut();
+        unsafe { rtcSetDeviceErrorFunction(device, Some(error_callback), user); }
+        Device { ptr: device }
     }
 }
 
-unsafe impl Send for Device {}
-unsafe impl Sync for Device {}
+unsafe extern "C" fn error_callback(_: *mut c_void, error: i32, str: *const c_char) {
+    let msg = CStr::from_ptr(str);
+    error!("{:?} (internal error {:?})", ErrorKind::from_i32(error), msg);
+}
 
 impl Clone for Device {
     fn clone(&self) -> Device {
-        unsafe { rtcRetainDevice(self.device) };
-        Device { self.device_handle }
+        unsafe { rtcRetainDevice(self.ptr) };
+        Device { ptr: self.ptr }
     }
 }
 
 impl Drop for Device {
     fn drop(&mut self) {
-        unsafe { rtcReleaseDevice(self.device_handle); }
+        unsafe { rtcReleaseDevice(self.ptr) };
     }
 }

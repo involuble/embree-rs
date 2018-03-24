@@ -11,3 +11,12 @@ pub enum ErrorKind {
     UnsupportedCPU = RTCError_RTC_ERROR_UNSUPPORTED_CPU,
     Cancelled = RTCError_RTC_ERROR_CANCELLED,
 }
+
+into_primitive!(ErrorKind, i32);
+
+impl ErrorKind {
+    pub fn from_i32(n: i32) -> Self {
+        // TODO: Fix this
+        unsafe { ::std::mem::transmute::<i32, Self>(n) }
+    }
+}

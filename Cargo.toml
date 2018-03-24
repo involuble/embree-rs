@@ -7,4 +7,8 @@ authors = ["Steven <locke9@gmail.com>"]
 embree-sys = { path = "embree-sys" }
 mint = "0.5"
 bitflags = "1.0"
+log = "0.4"
+
+#downcast_ref = "1.0"
+#mopa = "0.2"
 #smallvec = "0.6"
