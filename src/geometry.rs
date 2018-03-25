@@ -1,8 +1,9 @@
 use std::os::raw::c_void;
+use std::u32;
 
 use sys::*;
 
-use mint;
+use cgmath;
 
 use device::Device;
 use scene::BuildQuality;
@@ -15,14 +16,43 @@ pub trait Geometry {
         unsafe { rtcSetGeometryBuildQuality(handle.ptr, quality.into()); }
     }
 
-    fn set_transform(&self, transform: &mint::ColumnMatrix3x4<f32>) {
+    fn set_transform(&self, transform: &cgmath::Matrix4<f32>) {
         let handle = self.get_handle();
-        let xfm: &[f32; 12] = transform.as_ref();
+        let xfm: &[f32; 16] = transform.as_ref();
         unsafe {
             rtcSetGeometryTransform(handle.ptr, 0,
-                RTCFormat_RTC_FORMAT_FLOAT3X4_COLUMN_MAJOR,
+                RTCFormat_RTC_FORMAT_FLOAT4X4_COLUMN_MAJOR,
                 xfm.as_ptr() as *const c_void);
         }
+    }
+}
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct ID {
+    id: u32,
+}
+
+pub const INVALID_ID: u32 = u32::MAX;
+
+impl ID {
+    pub(crate) fn new(id: u32) -> Self {
+        ID { id: id }
+    }
+
+    pub fn invalid() -> Self {
+        ID {
+            id: INVALID_ID,
+        }
+    }
+
+    pub fn is_invalid(&self) -> bool {
+        self.id == INVALID_ID
+    }
+
+    pub fn unwrap(&self) -> u32 {
+        assert!(!self.is_invalid());
+        self.id
     }
 }
 
@@ -52,7 +82,7 @@ impl Drop for GeometryHandle {
 }
 
 #[repr(i32)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub enum GeometryType {
     Triangle = RTCGeometryType_RTC_GEOMETRY_TYPE_TRIANGLE,
     Quad = RTCGeometryType_RTC_GEOMETRY_TYPE_QUAD,

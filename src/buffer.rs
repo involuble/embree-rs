@@ -3,7 +3,7 @@ use std::os::raw::c_void;
 
 use sys::*;
 
-use mint;
+use cgmath;
 
 use geometry::GeometryHandle;
 
@@ -92,18 +92,18 @@ into_primitive!(BufferFormat, i32);
 
 // TODO: Should there be a Derive for these?
 
-impl FormattedType for mint::Vector2<f32> {
+impl FormattedType for cgmath::Vector2<f32> {
     const FORMAT: BufferFormat = BufferFormat::f32x2;
 }
 
-impl FormattedType for mint::Vector3<f32> {
+impl FormattedType for cgmath::Vector3<f32> {
     const FORMAT: BufferFormat = BufferFormat::f32x3;
 }
 
-impl FormattedType for mint::Point3<f32> {
+impl FormattedType for cgmath::Point3<f32> {
     const FORMAT: BufferFormat = BufferFormat::f32x3;
 }
 
-impl FormattedType for mint::Vector4<f32> {
+impl FormattedType for cgmath::Vector4<f32> {
     const FORMAT: BufferFormat = BufferFormat::f32x4;
 }

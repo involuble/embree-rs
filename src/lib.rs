@@ -2,7 +2,7 @@
 extern crate bitflags;
 #[macro_use]
 extern crate log;
-extern crate mint;
+extern crate cgmath;
 
 extern crate embree_sys as sys;
 
@@ -14,11 +14,11 @@ pub mod device;
 pub mod scene;
 pub mod error;
 pub mod geometry;
-pub mod triangle_geometry;
+pub mod polygon_geometry;
 
 pub use buffer::*;
 pub use device::*;
 pub use scene::*;
 pub use error::*;
 pub use geometry::*;
-pub use triangle_geometry::*;
+pub use polygon_geometry::*;
