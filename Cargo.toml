@@ -17,4 +17,5 @@ log = "0.4"
 [dev-dependencies]
 minifb = "0.10.4"
 derive_more = "0.9"
+num-traits = "0.2"
 # tobj = "0.1.6"

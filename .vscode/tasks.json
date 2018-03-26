@@ -33,17 +33,5 @@
             },
             "problemMatcher": []
         },
-        {
-            "label": "test",
-            "command": "cargo",
-            "args": [
-                "test"
-            ],
-            "group": "test",
-            "presentation": {
-                "reveal": "always",
-                "panel": "shared"
-            }
-        }
     ]
 }
