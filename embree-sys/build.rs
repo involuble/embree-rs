@@ -1,17 +1,19 @@
 #[cfg(feature = "bindgen")]
 extern crate bindgen;
+extern crate pkg_config;
 
 use std::path::PathBuf;
 use std::env;
 use std::fs;
-use std::error::Error;
+// use std::error::Error;
 use std::io;
+use std::process;
 
 #[cfg(feature = "bindgen")]
 use bindgen;
 
 #[cfg(feature = "bindgen")]
-fn generate_headers() -> Result<(), io::Error> {
+fn generate_bindings(include_dir: PathBuf) -> Result<(), io::Error> {
     let bindings_gen = bindgen::Builder::default()
         .header(embree_dir.join("include/embree3/rtcore.h"))
         .clang_arg("-I\"C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.10240.0\\ucrt\\\"");
@@ -22,18 +24,45 @@ fn generate_headers() -> Result<(), io::Error> {
 }
 
 #[cfg(not(feature = "bindgen"))]
-fn generate_headers() -> Result<(), io::Error> {
+fn generate_bindings(_: PathBuf) -> Result<(), io::Error> {
+    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
+    let crate_path = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
+    fs::copy(crate_path.join("pregenerated_bindings.rs"), out_path.join("bindings.rs"))?;
     Ok(())
 }
 
 fn main() {
-    let embree_dir;
-    if let Ok(path) = env::var("EMBREE_LIBRARY") {
-        embree_dir = PathBuf::from(path);
+    println!("cargo:rerun-if-changed=build.rs");
+
+    if let Ok(path) = env::var("EMBREE_DIR") {
+        let embree_dir = PathBuf::from(path);
+
+        let include_dir = embree_dir.join("include");
+        generate_bindings(include_dir).expect("Could not generate bindings");
+
+        println!("cargo:rustc-link-lib=embree3");
+
+        println!("cargo:rustc-link-search={}", embree_dir.join("lib").display());
+        println!("cargo:rustc-link-search=dylib={}", embree_dir.join("bin").display());
+
+        println!("cargo:rustc-link-lib=tbb");
+        println!("cargo:rustc-link-lib=tbbmalloc");
+
+        return;
     }
-    else {
-        panic!("Couldn't find embree: environment variable EMBREE_LIBRARY isn't set");
+
+    let pkg = pkg_config::Config::new().atleast_version("3.0.0").probe("embree");
+    if let Ok(lib) = pkg {
+        let include_dir = PathBuf::from(lib.include_paths[0].clone());
+        generate_bindings(include_dir).expect("Could not generate bindings");
+
+        println!("cargo:rustc-link-lib=tbb");
+        println!("cargo:rustc-link-lib=tbbmalloc");
+
+        return;
     }
+
+    panic!("Couldn't find embree: set environment variable EMBREE_DIR");
 
     // if !Path::new("embree/.git").exists() {
     //     Command::new("git").args(&["submodule", "update", "--init"]).status().unwrap();
@@ -53,23 +82,4 @@ fn main() {
     //     .define("EMBREE_STATIC_LIB", "ON")
     //     .define("EMBREE_TASKING_SYSTEM", "INTERNAL")
     //     .build();
-
-    if cfg!(feature = "bindgen") {
-        let _ = generate_headers();
-    }
-    else {
-        let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
-        let crate_path = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
-        fs::copy(crate_path.join("pregenerated_bindings.rs"), out_path.join("bindings.rs"))
-            .expect("Couldn't find pregenerated bindings");
-    }
-
-    println!("cargo:rustc-link-lib=embree3");
-    println!("cargo:rustc-link-search={}", embree_dir.join("lib").display());
-
-    println!("cargo:rustc-link-lib=tbb");
-    println!("cargo:rustc-link-lib=tbbmalloc");
-    println!("cargo:rustc-link-search=dylib={}", embree_dir.join("bin").display());
-
-    println!("cargo:rerun-if-changed=build.rs");
 }
