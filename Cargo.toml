@@ -5,7 +5,7 @@ authors = ["Steven <locke9@gmail.com>"]
 
 [dependencies]
 embree-sys = { path = "embree-sys" }
-# mint = "0.5"
+mint = "0.5"
 cgmath = "0.16"
 bitflags = "1.0"
 log = "0.4"

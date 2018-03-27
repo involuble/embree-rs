@@ -1,4 +1,5 @@
 use std::cmp::max;
+
 use cgmath::*;
 
 use sys::*;
@@ -6,6 +7,7 @@ use sys::*;
 use buffer::*;
 use device::*;
 use geometry::*;
+use type_format::*;
 
 #[repr(C)]
 pub struct Triangle(u32, u32, u32);
@@ -13,12 +15,12 @@ pub struct Triangle(u32, u32, u32);
 #[repr(C)]
 pub struct Quad(u32, u32, u32, u32);
 
-impl FormattedType for Triangle {
-    const FORMAT: BufferFormat = BufferFormat::u32x3;
+impl TypeFormat for Triangle {
+    const FORMAT: Format = Format::u32x3;
 }
 
-impl FormattedType for Quad {
-    const FORMAT: BufferFormat = BufferFormat::u32x4;
+impl TypeFormat for Quad {
+    const FORMAT: Format = Format::u32x4;
 }
 
 pub trait PolygonType {
@@ -44,8 +46,8 @@ const NORMALS_SLOT: u32 = 0;
 pub const UV_SLOT: u32 = 1;
 
 pub struct PolygonGeometry<P, T1 = Vector3<f32>>
-        where P: FormattedType, P: PolygonType, P: 'static,
-              T1: FormattedType, T1: 'static {
+        where P: TypeFormat, P: PolygonType, P: 'static,
+              T1: TypeFormat, T1: 'static {
     pub(crate) handle: GeometryHandle,
     pub indices: Buffer<P>,
     pub vertices: Buffer<Point3<f32>>,
@@ -55,8 +57,8 @@ pub struct PolygonGeometry<P, T1 = Vector3<f32>>
 }
 
 impl<P, T1> PolygonGeometry<P, T1>
-        where P: FormattedType, P: PolygonType, P: 'static,
-            T1: FormattedType, T1: 'static {
+        where P: TypeFormat, P: PolygonType, P: 'static,
+            T1: TypeFormat, T1: 'static {
     pub fn new(device: &Device, index_buffer: Vec<P>, vertex_buffer: Vec<Point3<f32>>) -> Self {
         assert!(P::POLYGON_TYPE == GeometryType::Triangle ||
             P::POLYGON_TYPE == GeometryType::Quad,
@@ -113,8 +115,8 @@ impl<P, T1> PolygonGeometry<P, T1>
 }
 
 impl<P, T1> Geometry for PolygonGeometry<P, T1>
-        where P: FormattedType, P: PolygonType, P: 'static,
-            T1: FormattedType, T1: 'static {
+        where P: TypeFormat, P: PolygonType, P: 'static,
+            T1: TypeFormat, T1: 'static {
     fn get_handle(&self) -> &GeometryHandle {
         &self.handle
     }
