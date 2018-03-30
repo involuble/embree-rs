@@ -5,13 +5,115 @@ pub const RTC_VERSION_MINOR: u32 = 0;
 pub const RTC_VERSION_PATCH: u32 = 0;
 pub const RTC_VERSION: u32 = 30000;
 pub const RTC_VERSION_STRING: &'static [u8; 6usize] = b"3.0.0\0";
-pub const true_: u32 = 1;
-pub const false_: u32 = 0;
+pub const _SAL_VERSION: u32 = 20;
+pub const __SAL_H_VERSION: u32 = 180000000;
+pub const _USE_DECLSPECS_FOR_SAL: u32 = 0;
+pub const _USE_ATTRIBUTES_FOR_SAL: u32 = 0;
+pub const _CRT_PACKING: u32 = 8;
+pub const _HAS_EXCEPTIONS: u32 = 1;
+pub const _ARGMAX: u32 = 100;
+pub const _CRT_INT_MAX: u32 = 2147483647;
+pub const _ARM_WINAPI_PARTITION_DESKTOP_SDK_AVAILABLE: u32 = 0;
+pub const _CRT_BUILD_DESKTOP_APP: u32 = 1;
+pub const __STDC_SECURE_LIB__: u32 = 200411;
+pub const __GOT_SECURE_LIB__: u32 = 200411;
+pub const __STDC_WANT_SECURE_LIB__: u32 = 1;
+pub const _SECURECRT_FILL_BUFFER_PATTERN: u32 = 254;
+pub const _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES: u32 = 0;
+pub const _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES_COUNT: u32 = 0;
+pub const _CRT_SECURE_CPP_OVERLOAD_SECURE_NAMES: u32 = 1;
+pub const _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES_MEMORY: u32 = 0;
+pub const _CRT_SECURE_CPP_OVERLOAD_SECURE_NAMES_MEMORY: u32 = 0;
 pub const __bool_true_false_are_defined: u32 = 1;
+pub const false_: u32 = 0;
+pub const true_: u32 = 1;
 pub const RTC_MAX_TIME_STEP_COUNT: u32 = 129;
 pub const RTC_MAX_INSTANCE_LEVEL_COUNT: u32 = 1;
+pub type va_list = *mut ::std::os::raw::c_char;
+extern "C" {
+    pub fn __va_start(arg1: *mut va_list, ...);
+}
+pub type __vcrt_bool = bool;
 pub type wchar_t = ::std::os::raw::c_ushort;
-pub type max_align_t = f64;
+extern "C" {
+    pub fn __security_init_cookie();
+}
+extern "C" {
+    pub fn __security_check_cookie(_StackCookie: usize);
+}
+extern "C" {
+    pub fn __report_gsfailure(_StackCookie: usize);
+}
+extern "C" {
+    #[link_name = "\u{1}__security_cookie"]
+    pub static mut __security_cookie: usize;
+}
+pub type __crt_bool = bool;
+extern "C" {
+    pub fn _invalid_parameter_noinfo();
+}
+extern "C" {
+    pub fn _invalid_parameter_noinfo_noreturn();
+}
+extern "C" {
+    pub fn _invoke_watson(
+        arg1: *const wchar_t,
+        arg2: *const wchar_t,
+        arg3: *const wchar_t,
+        arg4: ::std::os::raw::c_uint,
+        arg5: usize,
+    );
+}
+pub type errno_t = ::std::os::raw::c_int;
+pub type wint_t = ::std::os::raw::c_ushort;
+pub type wctype_t = ::std::os::raw::c_ushort;
+pub type __time32_t = ::std::os::raw::c_long;
+pub type __time64_t = ::std::os::raw::c_longlong;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct __crt_locale_data_public {
+    pub _locale_pctype: *const ::std::os::raw::c_ushort,
+    pub _locale_mb_cur_max: ::std::os::raw::c_int,
+    pub _locale_lc_codepage: ::std::os::raw::c_uint,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct __crt_locale_pointers {
+    pub locinfo: *mut __crt_locale_data,
+    pub mbcinfo: *mut __crt_multibyte_data,
+}
+pub type _locale_t = *mut __crt_locale_pointers;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _Mbstatet {
+    pub _Wchar: ::std::os::raw::c_ulong,
+    pub _Byte: ::std::os::raw::c_ushort,
+    pub _State: ::std::os::raw::c_ushort,
+}
+pub type mbstate_t = _Mbstatet;
+pub type time_t = __time64_t;
+pub type rsize_t = usize;
+extern "C" {
+    pub fn _errno() -> *mut ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn _set_errno(_Value: ::std::os::raw::c_int) -> errno_t;
+}
+extern "C" {
+    pub fn _get_errno(_Value: *mut ::std::os::raw::c_int) -> errno_t;
+}
+extern "C" {
+    pub fn __threadid() -> ::std::os::raw::c_ulong;
+}
+extern "C" {
+    pub fn __threadhandle() -> usize;
+}
+pub type _ino_t = ::std::os::raw::c_ushort;
+pub type ino_t = _ino_t;
+pub type _dev_t = ::std::os::raw::c_uint;
+pub type dev_t = _dev_t;
+pub type _off_t = ::std::os::raw::c_long;
+pub type off_t = _off_t;
 pub const RTCFormat_RTC_FORMAT_UNDEFINED: RTCFormat = 0;
 pub const RTCFormat_RTC_FORMAT_UCHAR: RTCFormat = 4097;
 pub const RTCFormat_RTC_FORMAT_UCHAR2: RTCFormat = 4098;
@@ -97,127 +199,11 @@ pub struct RTCBounds {
     pub upper_z: f32,
     pub align1: f32,
 }
-#[test]
-fn bindgen_test_layout_RTCBounds() {
-    assert_eq!(
-        ::std::mem::size_of::<RTCBounds>(),
-        32usize,
-        concat!("Size of: ", stringify!(RTCBounds))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBounds>())).lower_x as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBounds),
-            "::",
-            stringify!(lower_x)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBounds>())).lower_y as *const _ as usize },
-        4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBounds),
-            "::",
-            stringify!(lower_y)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBounds>())).lower_z as *const _ as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBounds),
-            "::",
-            stringify!(lower_z)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBounds>())).align0 as *const _ as usize },
-        12usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBounds),
-            "::",
-            stringify!(align0)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBounds>())).upper_x as *const _ as usize },
-        16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBounds),
-            "::",
-            stringify!(upper_x)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBounds>())).upper_y as *const _ as usize },
-        20usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBounds),
-            "::",
-            stringify!(upper_y)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBounds>())).upper_z as *const _ as usize },
-        24usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBounds),
-            "::",
-            stringify!(upper_z)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBounds>())).align1 as *const _ as usize },
-        28usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBounds),
-            "::",
-            stringify!(align1)
-        )
-    );
-}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct RTCLinearBounds {
     pub bounds0: RTCBounds,
     pub bounds1: RTCBounds,
-}
-#[test]
-fn bindgen_test_layout_RTCLinearBounds() {
-    assert_eq!(
-        ::std::mem::size_of::<RTCLinearBounds>(),
-        64usize,
-        concat!("Size of: ", stringify!(RTCLinearBounds))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCLinearBounds>())).bounds0 as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCLinearBounds),
-            "::",
-            stringify!(bounds0)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCLinearBounds>())).bounds1 as *const _ as usize },
-        32usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCLinearBounds),
-            "::",
-            stringify!(bounds1)
-        )
-    );
 }
 pub const RTCIntersectContextFlags_RTC_INTERSECT_CONTEXT_FLAG_NONE: RTCIntersectContextFlags = 0;
 pub const RTCIntersectContextFlags_RTC_INTERSECT_CONTEXT_FLAG_INCOHERENT: RTCIntersectContextFlags =
@@ -235,86 +221,6 @@ pub struct RTCFilterFunctionNArguments {
     pub hit: *mut RTCHitN,
     pub N: ::std::os::raw::c_uint,
 }
-#[test]
-fn bindgen_test_layout_RTCFilterFunctionNArguments() {
-    assert_eq!(
-        ::std::mem::size_of::<RTCFilterFunctionNArguments>(),
-        48usize,
-        concat!("Size of: ", stringify!(RTCFilterFunctionNArguments))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<RTCFilterFunctionNArguments>(),
-        8usize,
-        concat!("Alignment of ", stringify!(RTCFilterFunctionNArguments))
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCFilterFunctionNArguments>())).valid as *const _ as usize
-        },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCFilterFunctionNArguments),
-            "::",
-            stringify!(valid)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCFilterFunctionNArguments>())).geometryUserPtr as *const _
-                as usize
-        },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCFilterFunctionNArguments),
-            "::",
-            stringify!(geometryUserPtr)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCFilterFunctionNArguments>())).context as *const _ as usize
-        },
-        16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCFilterFunctionNArguments),
-            "::",
-            stringify!(context)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCFilterFunctionNArguments>())).ray as *const _ as usize },
-        24usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCFilterFunctionNArguments),
-            "::",
-            stringify!(ray)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCFilterFunctionNArguments>())).hit as *const _ as usize },
-        32usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCFilterFunctionNArguments),
-            "::",
-            stringify!(hit)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCFilterFunctionNArguments>())).N as *const _ as usize },
-        40usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCFilterFunctionNArguments),
-            "::",
-            stringify!(N)
-        )
-    );
-}
 pub type RTCFilterFunctionN =
     ::std::option::Option<unsafe extern "C" fn(args: *const RTCFilterFunctionNArguments)>;
 #[repr(C)]
@@ -323,49 +229,6 @@ pub struct RTCIntersectContext {
     pub flags: RTCIntersectContextFlags,
     pub filter: RTCFilterFunctionN,
     pub instID: [::std::os::raw::c_uint; 1usize],
-}
-#[test]
-fn bindgen_test_layout_RTCIntersectContext() {
-    assert_eq!(
-        ::std::mem::size_of::<RTCIntersectContext>(),
-        24usize,
-        concat!("Size of: ", stringify!(RTCIntersectContext))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<RTCIntersectContext>(),
-        8usize,
-        concat!("Alignment of ", stringify!(RTCIntersectContext))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCIntersectContext>())).flags as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCIntersectContext),
-            "::",
-            stringify!(flags)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCIntersectContext>())).filter as *const _ as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCIntersectContext),
-            "::",
-            stringify!(filter)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCIntersectContext>())).instID as *const _ as usize },
-        16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCIntersectContext),
-            "::",
-            stringify!(instID)
-        )
-    );
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -494,134 +357,6 @@ pub struct RTCRay {
     pub id: ::std::os::raw::c_uint,
     pub flags: ::std::os::raw::c_uint,
 }
-#[test]
-fn bindgen_test_layout_RTCRay() {
-    assert_eq!(
-        ::std::mem::size_of::<RTCRay>(),
-        48usize,
-        concat!("Size of: ", stringify!(RTCRay))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay>())).org_x as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay),
-            "::",
-            stringify!(org_x)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay>())).org_y as *const _ as usize },
-        4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay),
-            "::",
-            stringify!(org_y)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay>())).org_z as *const _ as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay),
-            "::",
-            stringify!(org_z)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay>())).tnear as *const _ as usize },
-        12usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay),
-            "::",
-            stringify!(tnear)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay>())).dir_x as *const _ as usize },
-        16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay),
-            "::",
-            stringify!(dir_x)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay>())).dir_y as *const _ as usize },
-        20usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay),
-            "::",
-            stringify!(dir_y)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay>())).dir_z as *const _ as usize },
-        24usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay),
-            "::",
-            stringify!(dir_z)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay>())).time as *const _ as usize },
-        28usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay),
-            "::",
-            stringify!(time)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay>())).tfar as *const _ as usize },
-        32usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay),
-            "::",
-            stringify!(tfar)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay>())).mask as *const _ as usize },
-        36usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay),
-            "::",
-            stringify!(mask)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay>())).id as *const _ as usize },
-        40usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay),
-            "::",
-            stringify!(id)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay>())).flags as *const _ as usize },
-        44usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay),
-            "::",
-            stringify!(flags)
-        )
-    );
-}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct RTCHit {
@@ -634,122 +369,11 @@ pub struct RTCHit {
     pub geomID: ::std::os::raw::c_uint,
     pub instID: [::std::os::raw::c_uint; 1usize],
 }
-#[test]
-fn bindgen_test_layout_RTCHit() {
-    assert_eq!(
-        ::std::mem::size_of::<RTCHit>(),
-        32usize,
-        concat!("Size of: ", stringify!(RTCHit))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<RTCHit>(),
-        4usize,
-        concat!("Alignment of ", stringify!(RTCHit))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit>())).Ng_x as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit),
-            "::",
-            stringify!(Ng_x)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit>())).Ng_y as *const _ as usize },
-        4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit),
-            "::",
-            stringify!(Ng_y)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit>())).Ng_z as *const _ as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit),
-            "::",
-            stringify!(Ng_z)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit>())).u as *const _ as usize },
-        12usize,
-        concat!("Offset of field: ", stringify!(RTCHit), "::", stringify!(u))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit>())).v as *const _ as usize },
-        16usize,
-        concat!("Offset of field: ", stringify!(RTCHit), "::", stringify!(v))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit>())).primID as *const _ as usize },
-        20usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit),
-            "::",
-            stringify!(primID)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit>())).geomID as *const _ as usize },
-        24usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit),
-            "::",
-            stringify!(geomID)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit>())).instID as *const _ as usize },
-        28usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit),
-            "::",
-            stringify!(instID)
-        )
-    );
-}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct RTCRayHit {
     pub ray: RTCRay,
     pub hit: RTCHit,
-}
-#[test]
-fn bindgen_test_layout_RTCRayHit() {
-    assert_eq!(
-        ::std::mem::size_of::<RTCRayHit>(),
-        80usize,
-        concat!("Size of: ", stringify!(RTCRayHit))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRayHit>())).ray as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRayHit),
-            "::",
-            stringify!(ray)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRayHit>())).hit as *const _ as usize },
-        48usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRayHit),
-            "::",
-            stringify!(hit)
-        )
-    );
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -767,134 +391,6 @@ pub struct RTCRay4 {
     pub id: [::std::os::raw::c_uint; 4usize],
     pub flags: [::std::os::raw::c_uint; 4usize],
 }
-#[test]
-fn bindgen_test_layout_RTCRay4() {
-    assert_eq!(
-        ::std::mem::size_of::<RTCRay4>(),
-        192usize,
-        concat!("Size of: ", stringify!(RTCRay4))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay4>())).org_x as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay4),
-            "::",
-            stringify!(org_x)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay4>())).org_y as *const _ as usize },
-        16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay4),
-            "::",
-            stringify!(org_y)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay4>())).org_z as *const _ as usize },
-        32usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay4),
-            "::",
-            stringify!(org_z)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay4>())).tnear as *const _ as usize },
-        48usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay4),
-            "::",
-            stringify!(tnear)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay4>())).dir_x as *const _ as usize },
-        64usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay4),
-            "::",
-            stringify!(dir_x)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay4>())).dir_y as *const _ as usize },
-        80usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay4),
-            "::",
-            stringify!(dir_y)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay4>())).dir_z as *const _ as usize },
-        96usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay4),
-            "::",
-            stringify!(dir_z)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay4>())).time as *const _ as usize },
-        112usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay4),
-            "::",
-            stringify!(time)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay4>())).tfar as *const _ as usize },
-        128usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay4),
-            "::",
-            stringify!(tfar)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay4>())).mask as *const _ as usize },
-        144usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay4),
-            "::",
-            stringify!(mask)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay4>())).id as *const _ as usize },
-        160usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay4),
-            "::",
-            stringify!(id)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay4>())).flags as *const _ as usize },
-        176usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay4),
-            "::",
-            stringify!(flags)
-        )
-    );
-}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct RTCHit4 {
@@ -907,127 +403,11 @@ pub struct RTCHit4 {
     pub geomID: [::std::os::raw::c_uint; 4usize],
     pub instID: [[::std::os::raw::c_uint; 4usize]; 1usize],
 }
-#[test]
-fn bindgen_test_layout_RTCHit4() {
-    assert_eq!(
-        ::std::mem::size_of::<RTCHit4>(),
-        128usize,
-        concat!("Size of: ", stringify!(RTCHit4))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit4>())).Ng_x as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit4),
-            "::",
-            stringify!(Ng_x)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit4>())).Ng_y as *const _ as usize },
-        16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit4),
-            "::",
-            stringify!(Ng_y)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit4>())).Ng_z as *const _ as usize },
-        32usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit4),
-            "::",
-            stringify!(Ng_z)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit4>())).u as *const _ as usize },
-        48usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit4),
-            "::",
-            stringify!(u)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit4>())).v as *const _ as usize },
-        64usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit4),
-            "::",
-            stringify!(v)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit4>())).primID as *const _ as usize },
-        80usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit4),
-            "::",
-            stringify!(primID)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit4>())).geomID as *const _ as usize },
-        96usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit4),
-            "::",
-            stringify!(geomID)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit4>())).instID as *const _ as usize },
-        112usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit4),
-            "::",
-            stringify!(instID)
-        )
-    );
-}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct RTCRayHit4 {
     pub ray: RTCRay4,
     pub hit: RTCHit4,
-}
-#[test]
-fn bindgen_test_layout_RTCRayHit4() {
-    assert_eq!(
-        ::std::mem::size_of::<RTCRayHit4>(),
-        320usize,
-        concat!("Size of: ", stringify!(RTCRayHit4))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRayHit4>())).ray as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRayHit4),
-            "::",
-            stringify!(ray)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRayHit4>())).hit as *const _ as usize },
-        192usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRayHit4),
-            "::",
-            stringify!(hit)
-        )
-    );
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -1045,134 +425,6 @@ pub struct RTCRay8 {
     pub id: [::std::os::raw::c_uint; 8usize],
     pub flags: [::std::os::raw::c_uint; 8usize],
 }
-#[test]
-fn bindgen_test_layout_RTCRay8() {
-    assert_eq!(
-        ::std::mem::size_of::<RTCRay8>(),
-        384usize,
-        concat!("Size of: ", stringify!(RTCRay8))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay8>())).org_x as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay8),
-            "::",
-            stringify!(org_x)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay8>())).org_y as *const _ as usize },
-        32usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay8),
-            "::",
-            stringify!(org_y)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay8>())).org_z as *const _ as usize },
-        64usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay8),
-            "::",
-            stringify!(org_z)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay8>())).tnear as *const _ as usize },
-        96usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay8),
-            "::",
-            stringify!(tnear)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay8>())).dir_x as *const _ as usize },
-        128usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay8),
-            "::",
-            stringify!(dir_x)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay8>())).dir_y as *const _ as usize },
-        160usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay8),
-            "::",
-            stringify!(dir_y)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay8>())).dir_z as *const _ as usize },
-        192usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay8),
-            "::",
-            stringify!(dir_z)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay8>())).time as *const _ as usize },
-        224usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay8),
-            "::",
-            stringify!(time)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay8>())).tfar as *const _ as usize },
-        256usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay8),
-            "::",
-            stringify!(tfar)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay8>())).mask as *const _ as usize },
-        288usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay8),
-            "::",
-            stringify!(mask)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay8>())).id as *const _ as usize },
-        320usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay8),
-            "::",
-            stringify!(id)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay8>())).flags as *const _ as usize },
-        352usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay8),
-            "::",
-            stringify!(flags)
-        )
-    );
-}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct RTCHit8 {
@@ -1185,127 +437,11 @@ pub struct RTCHit8 {
     pub geomID: [::std::os::raw::c_uint; 8usize],
     pub instID: [[::std::os::raw::c_uint; 8usize]; 1usize],
 }
-#[test]
-fn bindgen_test_layout_RTCHit8() {
-    assert_eq!(
-        ::std::mem::size_of::<RTCHit8>(),
-        256usize,
-        concat!("Size of: ", stringify!(RTCHit8))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit8>())).Ng_x as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit8),
-            "::",
-            stringify!(Ng_x)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit8>())).Ng_y as *const _ as usize },
-        32usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit8),
-            "::",
-            stringify!(Ng_y)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit8>())).Ng_z as *const _ as usize },
-        64usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit8),
-            "::",
-            stringify!(Ng_z)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit8>())).u as *const _ as usize },
-        96usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit8),
-            "::",
-            stringify!(u)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit8>())).v as *const _ as usize },
-        128usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit8),
-            "::",
-            stringify!(v)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit8>())).primID as *const _ as usize },
-        160usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit8),
-            "::",
-            stringify!(primID)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit8>())).geomID as *const _ as usize },
-        192usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit8),
-            "::",
-            stringify!(geomID)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit8>())).instID as *const _ as usize },
-        224usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit8),
-            "::",
-            stringify!(instID)
-        )
-    );
-}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct RTCRayHit8 {
     pub ray: RTCRay8,
     pub hit: RTCHit8,
-}
-#[test]
-fn bindgen_test_layout_RTCRayHit8() {
-    assert_eq!(
-        ::std::mem::size_of::<RTCRayHit8>(),
-        640usize,
-        concat!("Size of: ", stringify!(RTCRayHit8))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRayHit8>())).ray as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRayHit8),
-            "::",
-            stringify!(ray)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRayHit8>())).hit as *const _ as usize },
-        384usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRayHit8),
-            "::",
-            stringify!(hit)
-        )
-    );
 }
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -1323,134 +459,6 @@ pub struct RTCRay16 {
     pub id: [::std::os::raw::c_uint; 16usize],
     pub flags: [::std::os::raw::c_uint; 16usize],
 }
-#[test]
-fn bindgen_test_layout_RTCRay16() {
-    assert_eq!(
-        ::std::mem::size_of::<RTCRay16>(),
-        768usize,
-        concat!("Size of: ", stringify!(RTCRay16))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay16>())).org_x as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay16),
-            "::",
-            stringify!(org_x)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay16>())).org_y as *const _ as usize },
-        64usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay16),
-            "::",
-            stringify!(org_y)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay16>())).org_z as *const _ as usize },
-        128usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay16),
-            "::",
-            stringify!(org_z)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay16>())).tnear as *const _ as usize },
-        192usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay16),
-            "::",
-            stringify!(tnear)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay16>())).dir_x as *const _ as usize },
-        256usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay16),
-            "::",
-            stringify!(dir_x)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay16>())).dir_y as *const _ as usize },
-        320usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay16),
-            "::",
-            stringify!(dir_y)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay16>())).dir_z as *const _ as usize },
-        384usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay16),
-            "::",
-            stringify!(dir_z)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay16>())).time as *const _ as usize },
-        448usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay16),
-            "::",
-            stringify!(time)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay16>())).tfar as *const _ as usize },
-        512usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay16),
-            "::",
-            stringify!(tfar)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay16>())).mask as *const _ as usize },
-        576usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay16),
-            "::",
-            stringify!(mask)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay16>())).id as *const _ as usize },
-        640usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay16),
-            "::",
-            stringify!(id)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRay16>())).flags as *const _ as usize },
-        704usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRay16),
-            "::",
-            stringify!(flags)
-        )
-    );
-}
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct RTCHit16 {
@@ -1463,127 +471,11 @@ pub struct RTCHit16 {
     pub geomID: [::std::os::raw::c_uint; 16usize],
     pub instID: [[::std::os::raw::c_uint; 16usize]; 1usize],
 }
-#[test]
-fn bindgen_test_layout_RTCHit16() {
-    assert_eq!(
-        ::std::mem::size_of::<RTCHit16>(),
-        512usize,
-        concat!("Size of: ", stringify!(RTCHit16))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit16>())).Ng_x as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit16),
-            "::",
-            stringify!(Ng_x)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit16>())).Ng_y as *const _ as usize },
-        64usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit16),
-            "::",
-            stringify!(Ng_y)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit16>())).Ng_z as *const _ as usize },
-        128usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit16),
-            "::",
-            stringify!(Ng_z)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit16>())).u as *const _ as usize },
-        192usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit16),
-            "::",
-            stringify!(u)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit16>())).v as *const _ as usize },
-        256usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit16),
-            "::",
-            stringify!(v)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit16>())).primID as *const _ as usize },
-        320usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit16),
-            "::",
-            stringify!(primID)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit16>())).geomID as *const _ as usize },
-        384usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit16),
-            "::",
-            stringify!(geomID)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHit16>())).instID as *const _ as usize },
-        448usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHit16),
-            "::",
-            stringify!(instID)
-        )
-    );
-}
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct RTCRayHit16 {
     pub ray: RTCRay16,
     pub hit: RTCHit16,
-}
-#[test]
-fn bindgen_test_layout_RTCRayHit16() {
-    assert_eq!(
-        ::std::mem::size_of::<RTCRayHit16>(),
-        1280usize,
-        concat!("Size of: ", stringify!(RTCRayHit16))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRayHit16>())).ray as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRayHit16),
-            "::",
-            stringify!(ray)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRayHit16>())).hit as *const _ as usize },
-        768usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRayHit16),
-            "::",
-            stringify!(hit)
-        )
-    );
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -1601,139 +493,6 @@ pub struct RTCRayNp {
     pub id: *mut ::std::os::raw::c_uint,
     pub flags: *mut ::std::os::raw::c_uint,
 }
-#[test]
-fn bindgen_test_layout_RTCRayNp() {
-    assert_eq!(
-        ::std::mem::size_of::<RTCRayNp>(),
-        96usize,
-        concat!("Size of: ", stringify!(RTCRayNp))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<RTCRayNp>(),
-        8usize,
-        concat!("Alignment of ", stringify!(RTCRayNp))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRayNp>())).org_x as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRayNp),
-            "::",
-            stringify!(org_x)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRayNp>())).org_y as *const _ as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRayNp),
-            "::",
-            stringify!(org_y)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRayNp>())).org_z as *const _ as usize },
-        16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRayNp),
-            "::",
-            stringify!(org_z)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRayNp>())).tnear as *const _ as usize },
-        24usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRayNp),
-            "::",
-            stringify!(tnear)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRayNp>())).dir_x as *const _ as usize },
-        32usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRayNp),
-            "::",
-            stringify!(dir_x)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRayNp>())).dir_y as *const _ as usize },
-        40usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRayNp),
-            "::",
-            stringify!(dir_y)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRayNp>())).dir_z as *const _ as usize },
-        48usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRayNp),
-            "::",
-            stringify!(dir_z)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRayNp>())).time as *const _ as usize },
-        56usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRayNp),
-            "::",
-            stringify!(time)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRayNp>())).tfar as *const _ as usize },
-        64usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRayNp),
-            "::",
-            stringify!(tfar)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRayNp>())).mask as *const _ as usize },
-        72usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRayNp),
-            "::",
-            stringify!(mask)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRayNp>())).id as *const _ as usize },
-        80usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRayNp),
-            "::",
-            stringify!(id)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRayNp>())).flags as *const _ as usize },
-        88usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRayNp),
-            "::",
-            stringify!(flags)
-        )
-    );
-}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct RTCHitNp {
@@ -1746,137 +505,11 @@ pub struct RTCHitNp {
     pub geomID: *mut ::std::os::raw::c_uint,
     pub instID: [*mut ::std::os::raw::c_uint; 1usize],
 }
-#[test]
-fn bindgen_test_layout_RTCHitNp() {
-    assert_eq!(
-        ::std::mem::size_of::<RTCHitNp>(),
-        64usize,
-        concat!("Size of: ", stringify!(RTCHitNp))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<RTCHitNp>(),
-        8usize,
-        concat!("Alignment of ", stringify!(RTCHitNp))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHitNp>())).Ng_x as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHitNp),
-            "::",
-            stringify!(Ng_x)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHitNp>())).Ng_y as *const _ as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHitNp),
-            "::",
-            stringify!(Ng_y)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHitNp>())).Ng_z as *const _ as usize },
-        16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHitNp),
-            "::",
-            stringify!(Ng_z)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHitNp>())).u as *const _ as usize },
-        24usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHitNp),
-            "::",
-            stringify!(u)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHitNp>())).v as *const _ as usize },
-        32usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHitNp),
-            "::",
-            stringify!(v)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHitNp>())).primID as *const _ as usize },
-        40usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHitNp),
-            "::",
-            stringify!(primID)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHitNp>())).geomID as *const _ as usize },
-        48usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHitNp),
-            "::",
-            stringify!(geomID)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCHitNp>())).instID as *const _ as usize },
-        56usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCHitNp),
-            "::",
-            stringify!(instID)
-        )
-    );
-}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct RTCRayHitNp {
     pub ray: RTCRayNp,
     pub hit: RTCHitNp,
-}
-#[test]
-fn bindgen_test_layout_RTCRayHitNp() {
-    assert_eq!(
-        ::std::mem::size_of::<RTCRayHitNp>(),
-        160usize,
-        concat!("Size of: ", stringify!(RTCRayHitNp))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<RTCRayHitNp>(),
-        8usize,
-        concat!("Alignment of ", stringify!(RTCRayHitNp))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRayHitNp>())).ray as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRayHitNp),
-            "::",
-            stringify!(ray)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCRayHitNp>())).hit as *const _ as usize },
-        96usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCRayHitNp),
-            "::",
-            stringify!(hit)
-        )
-    );
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -1933,68 +566,6 @@ pub struct RTCBoundsFunctionArguments {
     pub timeStep: ::std::os::raw::c_uint,
     pub bounds_o: *mut RTCBounds,
 }
-#[test]
-fn bindgen_test_layout_RTCBoundsFunctionArguments() {
-    assert_eq!(
-        ::std::mem::size_of::<RTCBoundsFunctionArguments>(),
-        24usize,
-        concat!("Size of: ", stringify!(RTCBoundsFunctionArguments))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<RTCBoundsFunctionArguments>(),
-        8usize,
-        concat!("Alignment of ", stringify!(RTCBoundsFunctionArguments))
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCBoundsFunctionArguments>())).geometryUserPtr as *const _
-                as usize
-        },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBoundsFunctionArguments),
-            "::",
-            stringify!(geometryUserPtr)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCBoundsFunctionArguments>())).primID as *const _ as usize
-        },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBoundsFunctionArguments),
-            "::",
-            stringify!(primID)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCBoundsFunctionArguments>())).timeStep as *const _ as usize
-        },
-        12usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBoundsFunctionArguments),
-            "::",
-            stringify!(timeStep)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCBoundsFunctionArguments>())).bounds_o as *const _ as usize
-        },
-        16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBoundsFunctionArguments),
-            "::",
-            stringify!(bounds_o)
-        )
-    );
-}
 pub type RTCBoundsFunction =
     ::std::option::Option<unsafe extern "C" fn(args: *const RTCBoundsFunctionArguments)>;
 #[repr(C)]
@@ -2007,92 +578,6 @@ pub struct RTCIntersectFunctionNArguments {
     pub rayhit: *mut RTCRayHitN,
     pub N: ::std::os::raw::c_uint,
 }
-#[test]
-fn bindgen_test_layout_RTCIntersectFunctionNArguments() {
-    assert_eq!(
-        ::std::mem::size_of::<RTCIntersectFunctionNArguments>(),
-        48usize,
-        concat!("Size of: ", stringify!(RTCIntersectFunctionNArguments))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<RTCIntersectFunctionNArguments>(),
-        8usize,
-        concat!("Alignment of ", stringify!(RTCIntersectFunctionNArguments))
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCIntersectFunctionNArguments>())).valid as *const _ as usize
-        },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCIntersectFunctionNArguments),
-            "::",
-            stringify!(valid)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCIntersectFunctionNArguments>())).geometryUserPtr as *const _
-                as usize
-        },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCIntersectFunctionNArguments),
-            "::",
-            stringify!(geometryUserPtr)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCIntersectFunctionNArguments>())).primID as *const _ as usize
-        },
-        16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCIntersectFunctionNArguments),
-            "::",
-            stringify!(primID)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCIntersectFunctionNArguments>())).context as *const _ as usize
-        },
-        24usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCIntersectFunctionNArguments),
-            "::",
-            stringify!(context)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCIntersectFunctionNArguments>())).rayhit as *const _ as usize
-        },
-        32usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCIntersectFunctionNArguments),
-            "::",
-            stringify!(rayhit)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCIntersectFunctionNArguments>())).N as *const _ as usize
-        },
-        40usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCIntersectFunctionNArguments),
-            "::",
-            stringify!(N)
-        )
-    );
-}
 pub type RTCIntersectFunctionN =
     ::std::option::Option<unsafe extern "C" fn(args: *const RTCIntersectFunctionNArguments)>;
 #[repr(C)]
@@ -2104,90 +589,6 @@ pub struct RTCOccludedFunctionNArguments {
     pub context: *mut RTCIntersectContext,
     pub ray: *mut RTCRayN,
     pub N: ::std::os::raw::c_uint,
-}
-#[test]
-fn bindgen_test_layout_RTCOccludedFunctionNArguments() {
-    assert_eq!(
-        ::std::mem::size_of::<RTCOccludedFunctionNArguments>(),
-        48usize,
-        concat!("Size of: ", stringify!(RTCOccludedFunctionNArguments))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<RTCOccludedFunctionNArguments>(),
-        8usize,
-        concat!("Alignment of ", stringify!(RTCOccludedFunctionNArguments))
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCOccludedFunctionNArguments>())).valid as *const _ as usize
-        },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCOccludedFunctionNArguments),
-            "::",
-            stringify!(valid)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCOccludedFunctionNArguments>())).geometryUserPtr as *const _
-                as usize
-        },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCOccludedFunctionNArguments),
-            "::",
-            stringify!(geometryUserPtr)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCOccludedFunctionNArguments>())).primID as *const _ as usize
-        },
-        16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCOccludedFunctionNArguments),
-            "::",
-            stringify!(primID)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCOccludedFunctionNArguments>())).context as *const _ as usize
-        },
-        24usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCOccludedFunctionNArguments),
-            "::",
-            stringify!(context)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCOccludedFunctionNArguments>())).ray as *const _ as usize
-        },
-        32usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCOccludedFunctionNArguments),
-            "::",
-            stringify!(ray)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCOccludedFunctionNArguments>())).N as *const _ as usize },
-        40usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCOccludedFunctionNArguments),
-            "::",
-            stringify!(N)
-        )
-    );
 }
 pub type RTCOccludedFunctionN =
     ::std::option::Option<unsafe extern "C" fn(args: *const RTCOccludedFunctionNArguments)>;
@@ -2207,182 +608,6 @@ pub struct RTCDisplacementFunctionNArguments {
     pub P_y: *mut f32,
     pub P_z: *mut f32,
     pub N: ::std::os::raw::c_uint,
-}
-#[test]
-fn bindgen_test_layout_RTCDisplacementFunctionNArguments() {
-    assert_eq!(
-        ::std::mem::size_of::<RTCDisplacementFunctionNArguments>(),
-        96usize,
-        concat!("Size of: ", stringify!(RTCDisplacementFunctionNArguments))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<RTCDisplacementFunctionNArguments>(),
-        8usize,
-        concat!(
-            "Alignment of ",
-            stringify!(RTCDisplacementFunctionNArguments)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCDisplacementFunctionNArguments>())).geometryUserPtr
-                as *const _ as usize
-        },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCDisplacementFunctionNArguments),
-            "::",
-            stringify!(geometryUserPtr)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCDisplacementFunctionNArguments>())).geometry as *const _
-                as usize
-        },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCDisplacementFunctionNArguments),
-            "::",
-            stringify!(geometry)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCDisplacementFunctionNArguments>())).primID as *const _
-                as usize
-        },
-        16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCDisplacementFunctionNArguments),
-            "::",
-            stringify!(primID)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCDisplacementFunctionNArguments>())).timeStep as *const _
-                as usize
-        },
-        20usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCDisplacementFunctionNArguments),
-            "::",
-            stringify!(timeStep)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCDisplacementFunctionNArguments>())).u as *const _ as usize
-        },
-        24usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCDisplacementFunctionNArguments),
-            "::",
-            stringify!(u)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCDisplacementFunctionNArguments>())).v as *const _ as usize
-        },
-        32usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCDisplacementFunctionNArguments),
-            "::",
-            stringify!(v)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCDisplacementFunctionNArguments>())).Ng_x as *const _ as usize
-        },
-        40usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCDisplacementFunctionNArguments),
-            "::",
-            stringify!(Ng_x)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCDisplacementFunctionNArguments>())).Ng_y as *const _ as usize
-        },
-        48usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCDisplacementFunctionNArguments),
-            "::",
-            stringify!(Ng_y)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCDisplacementFunctionNArguments>())).Ng_z as *const _ as usize
-        },
-        56usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCDisplacementFunctionNArguments),
-            "::",
-            stringify!(Ng_z)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCDisplacementFunctionNArguments>())).P_x as *const _ as usize
-        },
-        64usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCDisplacementFunctionNArguments),
-            "::",
-            stringify!(P_x)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCDisplacementFunctionNArguments>())).P_y as *const _ as usize
-        },
-        72usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCDisplacementFunctionNArguments),
-            "::",
-            stringify!(P_y)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCDisplacementFunctionNArguments>())).P_z as *const _ as usize
-        },
-        80usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCDisplacementFunctionNArguments),
-            "::",
-            stringify!(P_z)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCDisplacementFunctionNArguments>())).N as *const _ as usize
-        },
-        88usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCDisplacementFunctionNArguments),
-            "::",
-            stringify!(N)
-        )
-    );
 }
 pub type RTCDisplacementFunctionN =
     ::std::option::Option<unsafe extern "C" fn(args: *const RTCDisplacementFunctionNArguments)>;
@@ -2578,157 +803,6 @@ pub struct RTCInterpolateArguments {
     pub ddPdudv: *mut f32,
     pub valueCount: ::std::os::raw::c_uint,
 }
-#[test]
-fn bindgen_test_layout_RTCInterpolateArguments() {
-    assert_eq!(
-        ::std::mem::size_of::<RTCInterpolateArguments>(),
-        88usize,
-        concat!("Size of: ", stringify!(RTCInterpolateArguments))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<RTCInterpolateArguments>(),
-        8usize,
-        concat!("Alignment of ", stringify!(RTCInterpolateArguments))
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCInterpolateArguments>())).geometry as *const _ as usize
-        },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCInterpolateArguments),
-            "::",
-            stringify!(geometry)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCInterpolateArguments>())).primID as *const _ as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCInterpolateArguments),
-            "::",
-            stringify!(primID)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCInterpolateArguments>())).u as *const _ as usize },
-        12usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCInterpolateArguments),
-            "::",
-            stringify!(u)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCInterpolateArguments>())).v as *const _ as usize },
-        16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCInterpolateArguments),
-            "::",
-            stringify!(v)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCInterpolateArguments>())).bufferType as *const _ as usize
-        },
-        20usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCInterpolateArguments),
-            "::",
-            stringify!(bufferType)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCInterpolateArguments>())).bufferSlot as *const _ as usize
-        },
-        24usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCInterpolateArguments),
-            "::",
-            stringify!(bufferSlot)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCInterpolateArguments>())).P as *const _ as usize },
-        32usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCInterpolateArguments),
-            "::",
-            stringify!(P)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCInterpolateArguments>())).dPdu as *const _ as usize },
-        40usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCInterpolateArguments),
-            "::",
-            stringify!(dPdu)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCInterpolateArguments>())).dPdv as *const _ as usize },
-        48usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCInterpolateArguments),
-            "::",
-            stringify!(dPdv)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCInterpolateArguments>())).ddPdudu as *const _ as usize },
-        56usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCInterpolateArguments),
-            "::",
-            stringify!(ddPdudu)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCInterpolateArguments>())).ddPdvdv as *const _ as usize },
-        64usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCInterpolateArguments),
-            "::",
-            stringify!(ddPdvdv)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCInterpolateArguments>())).ddPdudv as *const _ as usize },
-        72usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCInterpolateArguments),
-            "::",
-            stringify!(ddPdudv)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCInterpolateArguments>())).valueCount as *const _ as usize
-        },
-        80usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCInterpolateArguments),
-            "::",
-            stringify!(valueCount)
-        )
-    );
-}
 extern "C" {
     pub fn rtcInterpolate(args: *const RTCInterpolateArguments);
 }
@@ -2750,185 +824,6 @@ pub struct RTCInterpolateNArguments {
     pub ddPdvdv: *mut f32,
     pub ddPdudv: *mut f32,
     pub valueCount: ::std::os::raw::c_uint,
-}
-#[test]
-fn bindgen_test_layout_RTCInterpolateNArguments() {
-    assert_eq!(
-        ::std::mem::size_of::<RTCInterpolateNArguments>(),
-        112usize,
-        concat!("Size of: ", stringify!(RTCInterpolateNArguments))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<RTCInterpolateNArguments>(),
-        8usize,
-        concat!("Alignment of ", stringify!(RTCInterpolateNArguments))
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCInterpolateNArguments>())).geometry as *const _ as usize
-        },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCInterpolateNArguments),
-            "::",
-            stringify!(geometry)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCInterpolateNArguments>())).valid as *const _ as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCInterpolateNArguments),
-            "::",
-            stringify!(valid)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCInterpolateNArguments>())).primIDs as *const _ as usize
-        },
-        16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCInterpolateNArguments),
-            "::",
-            stringify!(primIDs)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCInterpolateNArguments>())).u as *const _ as usize },
-        24usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCInterpolateNArguments),
-            "::",
-            stringify!(u)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCInterpolateNArguments>())).v as *const _ as usize },
-        32usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCInterpolateNArguments),
-            "::",
-            stringify!(v)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCInterpolateNArguments>())).N as *const _ as usize },
-        40usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCInterpolateNArguments),
-            "::",
-            stringify!(N)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCInterpolateNArguments>())).bufferType as *const _ as usize
-        },
-        44usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCInterpolateNArguments),
-            "::",
-            stringify!(bufferType)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCInterpolateNArguments>())).bufferSlot as *const _ as usize
-        },
-        48usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCInterpolateNArguments),
-            "::",
-            stringify!(bufferSlot)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCInterpolateNArguments>())).P as *const _ as usize },
-        56usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCInterpolateNArguments),
-            "::",
-            stringify!(P)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCInterpolateNArguments>())).dPdu as *const _ as usize },
-        64usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCInterpolateNArguments),
-            "::",
-            stringify!(dPdu)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCInterpolateNArguments>())).dPdv as *const _ as usize },
-        72usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCInterpolateNArguments),
-            "::",
-            stringify!(dPdv)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCInterpolateNArguments>())).ddPdudu as *const _ as usize
-        },
-        80usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCInterpolateNArguments),
-            "::",
-            stringify!(ddPdudu)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCInterpolateNArguments>())).ddPdvdv as *const _ as usize
-        },
-        88usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCInterpolateNArguments),
-            "::",
-            stringify!(ddPdvdv)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCInterpolateNArguments>())).ddPdudv as *const _ as usize
-        },
-        96usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCInterpolateNArguments),
-            "::",
-            stringify!(ddPdudv)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCInterpolateNArguments>())).valueCount as *const _ as usize
-        },
-        104usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCInterpolateNArguments),
-            "::",
-            stringify!(valueCount)
-        )
-    );
 }
 extern "C" {
     pub fn rtcInterpolateN(args: *const RTCInterpolateNArguments);
@@ -3140,94 +1035,6 @@ pub struct RTCBuildPrimitive {
     pub upper_z: f32,
     pub primID: ::std::os::raw::c_uint,
 }
-#[test]
-fn bindgen_test_layout_RTCBuildPrimitive() {
-    assert_eq!(
-        ::std::mem::size_of::<RTCBuildPrimitive>(),
-        32usize,
-        concat!("Size of: ", stringify!(RTCBuildPrimitive))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBuildPrimitive>())).lower_x as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildPrimitive),
-            "::",
-            stringify!(lower_x)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBuildPrimitive>())).lower_y as *const _ as usize },
-        4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildPrimitive),
-            "::",
-            stringify!(lower_y)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBuildPrimitive>())).lower_z as *const _ as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildPrimitive),
-            "::",
-            stringify!(lower_z)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBuildPrimitive>())).geomID as *const _ as usize },
-        12usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildPrimitive),
-            "::",
-            stringify!(geomID)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBuildPrimitive>())).upper_x as *const _ as usize },
-        16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildPrimitive),
-            "::",
-            stringify!(upper_x)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBuildPrimitive>())).upper_y as *const _ as usize },
-        20usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildPrimitive),
-            "::",
-            stringify!(upper_y)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBuildPrimitive>())).upper_z as *const _ as usize },
-        24usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildPrimitive),
-            "::",
-            stringify!(upper_z)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBuildPrimitive>())).primID as *const _ as usize },
-        28usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildPrimitive),
-            "::",
-            stringify!(primID)
-        )
-    );
-}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct RTCThreadLocalAllocatorTy {
@@ -3303,242 +1110,6 @@ pub struct RTCBuildArguments {
     pub buildProgress: RTCProgressMonitorFunction,
     pub userPtr: *mut ::std::os::raw::c_void,
 }
-#[test]
-fn bindgen_test_layout_RTCBuildArguments() {
-    assert_eq!(
-        ::std::mem::size_of::<RTCBuildArguments>(),
-        136usize,
-        concat!("Size of: ", stringify!(RTCBuildArguments))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<RTCBuildArguments>(),
-        8usize,
-        concat!("Alignment of ", stringify!(RTCBuildArguments))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBuildArguments>())).byteSize as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildArguments),
-            "::",
-            stringify!(byteSize)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBuildArguments>())).buildQuality as *const _ as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildArguments),
-            "::",
-            stringify!(buildQuality)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBuildArguments>())).buildFlags as *const _ as usize },
-        12usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildArguments),
-            "::",
-            stringify!(buildFlags)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCBuildArguments>())).maxBranchingFactor as *const _ as usize
-        },
-        16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildArguments),
-            "::",
-            stringify!(maxBranchingFactor)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBuildArguments>())).maxDepth as *const _ as usize },
-        20usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildArguments),
-            "::",
-            stringify!(maxDepth)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBuildArguments>())).sahBlockSize as *const _ as usize },
-        24usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildArguments),
-            "::",
-            stringify!(sahBlockSize)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBuildArguments>())).minLeafSize as *const _ as usize },
-        28usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildArguments),
-            "::",
-            stringify!(minLeafSize)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBuildArguments>())).maxLeafSize as *const _ as usize },
-        32usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildArguments),
-            "::",
-            stringify!(maxLeafSize)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBuildArguments>())).traversalCost as *const _ as usize },
-        36usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildArguments),
-            "::",
-            stringify!(traversalCost)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCBuildArguments>())).intersectionCost as *const _ as usize
-        },
-        40usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildArguments),
-            "::",
-            stringify!(intersectionCost)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBuildArguments>())).bvh as *const _ as usize },
-        48usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildArguments),
-            "::",
-            stringify!(bvh)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBuildArguments>())).primitives as *const _ as usize },
-        56usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildArguments),
-            "::",
-            stringify!(primitives)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCBuildArguments>())).primitiveCount as *const _ as usize
-        },
-        64usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildArguments),
-            "::",
-            stringify!(primitiveCount)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCBuildArguments>())).primitiveArrayCapacity as *const _
-                as usize
-        },
-        72usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildArguments),
-            "::",
-            stringify!(primitiveArrayCapacity)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBuildArguments>())).createNode as *const _ as usize },
-        80usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildArguments),
-            "::",
-            stringify!(createNode)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCBuildArguments>())).setNodeChildren as *const _ as usize
-        },
-        88usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildArguments),
-            "::",
-            stringify!(setNodeChildren)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBuildArguments>())).setNodeBounds as *const _ as usize },
-        96usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildArguments),
-            "::",
-            stringify!(setNodeBounds)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBuildArguments>())).createLeaf as *const _ as usize },
-        104usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildArguments),
-            "::",
-            stringify!(createLeaf)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<RTCBuildArguments>())).splitPrimitive as *const _ as usize
-        },
-        112usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildArguments),
-            "::",
-            stringify!(splitPrimitive)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBuildArguments>())).buildProgress as *const _ as usize },
-        120usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildArguments),
-            "::",
-            stringify!(buildProgress)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<RTCBuildArguments>())).userPtr as *const _ as usize },
-        128usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(RTCBuildArguments),
-            "::",
-            stringify!(userPtr)
-        )
-    );
-}
 extern "C" {
     pub fn rtcNewBVH(device: RTCDevice) -> RTCBVH;
 }
@@ -3557,4 +1128,14 @@ extern "C" {
 }
 extern "C" {
     pub fn rtcReleaseBVH(bvh: RTCBVH);
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct __crt_locale_data {
+    pub _address: u8,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct __crt_multibyte_data {
+    pub _address: u8,
 }

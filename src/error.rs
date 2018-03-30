@@ -12,7 +12,7 @@ pub enum ErrorKind {
     Cancelled = RTCError_RTC_ERROR_CANCELLED,
 }
 
-into_primitive!(ErrorKind, i32);
+// into_primitive!(ErrorKind, i32);
 
 impl ErrorKind {
     pub fn from_i32(n: i32) -> Self {
