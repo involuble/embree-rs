@@ -4,13 +4,13 @@ extern crate bitflags;
 extern crate log;
 extern crate mint;
 extern crate cgmath;
+extern crate vec_map;
 
 extern crate embree_sys as sys;
 
 #[macro_use]
 mod enum_into;
 
-mod buffer;
 mod device;
 mod scene;
 mod error;
@@ -18,7 +18,6 @@ mod geometry;
 mod polygon_geometry;
 mod type_format;
 
-pub use buffer::*;
 pub use device::*;
 pub use scene::*;
 pub use error::*;

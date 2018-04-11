@@ -35,6 +35,49 @@ pub enum Format {
 
 into_primitive!(Format, i32);
 
+#[repr(i32)]
+#[derive(Debug, Copy, Clone)]
+#[allow(non_camel_case_types)]
+pub enum MatrixFormat {
+    float3x4RowMajor = RTCFormat_RTC_FORMAT_FLOAT3X4_ROW_MAJOR,
+    float3x4ColumnMajor = RTCFormat_RTC_FORMAT_FLOAT3X4_COLUMN_MAJOR,
+    float4x4ColumnMajor = RTCFormat_RTC_FORMAT_FLOAT4X4_COLUMN_MAJOR,
+}
+
+into_primitive!(MatrixFormat, i32);
+
+pub trait MatrixTypeFormat {
+    const FORMAT: MatrixFormat;
+
+    fn as_ptr(&self) -> *const f32;
+}
+
+impl MatrixTypeFormat for cgmath::Matrix4<f32> {
+    const FORMAT: MatrixFormat = MatrixFormat::float4x4ColumnMajor;
+
+    fn as_ptr(&self) -> *const f32 {
+        <cgmath::Matrix4<f32> as cgmath::Matrix>::as_ptr(self)
+    }
+}
+
+impl MatrixTypeFormat for mint::ColumnMatrix3x4<f32> {
+    const FORMAT: MatrixFormat = MatrixFormat::float3x4ColumnMajor;
+
+    fn as_ptr(&self) -> *const f32 {
+        let xfm: &[f32; 12] = self.as_ref();
+        xfm.as_ptr()
+    }
+}
+
+impl MatrixTypeFormat for mint::RowMatrix3x4<f32> {
+    const FORMAT: MatrixFormat = MatrixFormat::float3x4RowMajor;
+
+    fn as_ptr(&self) -> *const f32 {
+        let xfm: &[f32; 12] = self.as_ref();
+        xfm.as_ptr()
+    }
+}
+
 // TODO: Should there be a Derive for these?
 
 impl TypeFormat for cgmath::Vector2<f32> {

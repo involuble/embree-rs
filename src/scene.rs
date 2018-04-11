@@ -1,9 +1,10 @@
-use std::mem;
 use std::u32;
+use std::f32;
 
 use sys::*;
 
 use cgmath::*;
+use vec_map::*;
 
 use device::Device;
 use geometry::*;
@@ -11,12 +12,12 @@ use geometry::*;
 pub struct Scene {
     // TODO
     pub(crate) handle: SceneHandle,
-    pub(crate) geometries: Vec<Box<Geometry>>,
+    pub(crate) geometries: VecMap<Geometry>,
 }
 
 pub struct SceneBuilder {
     pub(crate) handle: SceneHandle,
-    pub(crate) geometries: Vec<Box<Geometry>>,
+    pub(crate) geometries: VecMap<Geometry>,
 }
 
 #[repr(C)]
@@ -28,6 +29,10 @@ impl SceneHandle {
     pub(crate) fn new(device: &Device) -> Self {
         let h = unsafe { rtcNewScene(device.ptr) };
         SceneHandle { ptr: h }
+    }
+
+    pub(crate) fn as_mut_ptr(&self) -> RTCScene {
+        self.ptr
     }
 }
 
@@ -48,19 +53,15 @@ impl SceneBuilder {
     pub fn new(device: &Device) -> Self {
         SceneBuilder {
             handle: SceneHandle::new(device),
-            geometries: Vec::new(),
+            geometries: VecMap::new(),
         }
     }
 
-    pub fn attach(&mut self, geometry: Box<Geometry>) -> ID {
-        let id: u32;
-        {
-            let geom_handle = geometry.get_handle();
-            id = unsafe { rtcAttachGeometry(self.handle.ptr, geom_handle.ptr) };
-        }
-        // FIXME
-        self.geometries.push(geometry);
-        ID::new(id)
+    pub fn attach(&mut self, geometry: Geometry) -> GeomID {
+        let id = unsafe { rtcAttachGeometry(self.handle.ptr, geometry.handle().as_ptr()) };
+        assert!(!self.geometries.contains_key(id as usize), "Geometry id already assigned");
+        self.geometries.insert(id as usize, geometry);
+        GeomID::new(id)
     }
 
     pub fn set_build_quality(&self, quality: BuildQuality) {
@@ -87,12 +88,34 @@ impl SceneBuilder {
     }
 }
 
-// TODO: align(16)
 #[repr(C)]
+#[repr(align(16))]
 #[derive(Debug, Copy, Clone)]
 pub struct Bounds {
     pub lower: Vector3<f32>,
+    align0: f32,
     pub upper: Vector3<f32>,
+    align1: f32,
+}
+
+impl Bounds {
+    pub fn zero() -> Self {
+        Bounds {
+            lower: Vector3::zero(),
+            align0: 0.0,
+            upper: Vector3::zero(),
+            align1: 0.0,
+        }
+    }
+
+    pub fn new(lower: Vector3<f32>, upper: Vector3<f32>) -> Self {
+        Bounds {
+            lower: lower,
+            align0: 0.0,
+            upper: upper,
+            align1: 0.0,
+        }
+    }
 }
 
 // bitflags! {
@@ -102,54 +125,79 @@ pub struct Bounds {
 //     }
 // }
 
-// TODO: align(16)
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct Ray {
     pub origin: Point3<f32>,
     pub tnear: f32,
     pub dir: Vector3<f32>,
-    time: f32,
     pub tfar: f32,
-    mask: u32,
-    id: u32,
-    flags: u32,
 }
 
-#[allow(non_snake_case)]
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct Hit {
-    pub Ng: Vector3<f32>,
-    pub uv: Vector2<f32>,
-    pub prim_id: ID,
-    pub geom_id: ID,
-    pub instance_id: ID,
+impl Ray {
 }
 
-impl Hit {
-    pub fn new() -> Self {
-        Hit {
-            Ng: Vector3::zero(),
-            uv: Vector2::zero(),
-            prim_id: ID::invalid(),
-            geom_id: ID::invalid(),
-            instance_id: ID::invalid(),
+impl Into<RTCRay> for Ray {
+    fn into(self) -> RTCRay {
+        RTCRay {
+            org_x: self.origin.x,
+            org_y: self.origin.y,
+            org_z: self.origin.z,
+            tnear: self.tnear,
+            dir_x: self.dir.x,
+            dir_y: self.dir.y,
+            dir_z: self.dir.z,
+            time: 0.0,
+            tfar: self.tfar,
+            mask: u32::MAX,
+            id: 0,
+            flags: 0,
         }
     }
 }
 
-// TODO: align(16)
-// TODO: add tests to ensure the field offsets stay the same
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct RayHit {
-    pub ray: Ray,
-    pub hit: Hit,
+#[allow(non_snake_case)]
+pub struct Hit {
+    pub Ng: Vector3<f32>,
+    pub t: f32,
+    pub uv: Vector2<f32>,
+    pub geom_id: GeomID,
+    pub prim_id: GeomID,
+    pub instance_id: GeomID,
+}
+
+impl Hit {
+    pub fn empty() -> Self {
+        Hit {
+            Ng: Vector3::zero(),
+            uv: Vector2::zero(),
+            t: 0.0,
+            geom_id: GeomID::invalid(),
+            prim_id: GeomID::invalid(),
+            instance_id: GeomID::invalid(),
+        }
+    }
+}
+
+#[repr(C)]
+#[repr(align(16))]
+#[derive(Debug, Copy, Clone)]
+struct RTCRayHitAligned {
+    pub ray: RTCRay,
+    pub hit: RTCHit,
+}
+
+#[repr(C)]
+#[repr(align(16))]
+#[derive(Debug, Copy, Clone)]
+struct RTCRayAligned {
+    pub ray: RTCRay,
 }
 
 // TODO: Could make new struct for this
-fn new_intersect_context() -> RTCIntersectContext{
+fn empty_intersect_context() -> RTCIntersectContext{
     RTCIntersectContext {
         flags: 0,
         filter: None,
@@ -159,35 +207,52 @@ fn new_intersect_context() -> RTCIntersectContext{
 
 impl Scene {
     pub fn bounds(&self) -> Bounds {
-        let mut b = RTCBounds {
-            lower_x: 0.0,
-            lower_y: 0.0,
-            lower_z: 0.0,
-            align0: 0.0,
-            upper_x: 0.0,
-            upper_y: 0.0,
-            upper_z: 0.0,
-            align1: 0.0,
-        };
-        unsafe { rtcGetSceneBounds(self.handle.ptr, &mut b); }
-        Bounds {
-            lower: Vector3::new(b.lower_x, b.lower_y, b.lower_z),
-            upper: Vector3::new(b.upper_x, b.upper_y, b.upper_z),
-        }
+        let mut b = Bounds::zero();
+        unsafe { rtcGetSceneBounds(self.handle.ptr, &mut b as *mut Bounds as *mut RTCBounds); }
+        b
     }
 
-    pub fn intersect(&self, ray: Ray) -> RayHit {
-        let mut context: RTCIntersectContext = new_intersect_context();
-        let mut rayhit = RayHit {
-            ray: ray,
-            hit: Hit::new(),
+    pub fn intersect(&self, ray: Ray) -> Hit {
+        let mut context: RTCIntersectContext = empty_intersect_context();
+        let mut rayhit = RTCRayHitAligned {
+            ray: ray.into(),
+            hit: RTCHit {
+                Ng_x: 0.0,
+                Ng_y: 0.0,
+                Ng_z: 0.0,
+                u: 0.0,
+                v: 0.0,
+                geomID: u32::MAX,
+                primID: u32::MAX,
+                instID: [u32::MAX],
+            }
         };
         unsafe {
             rtcIntersect1(self.handle.ptr,
                 &mut context,
-                mem::transmute::<*mut RayHit, *mut RTCRayHit>(&mut rayhit));
+                &mut rayhit as *mut RTCRayHitAligned as *mut RTCRayHit);
         }
-        rayhit
+        Hit {
+            Ng: Vector3::new(rayhit.hit.Ng_x, rayhit.hit.Ng_y, rayhit.hit.Ng_z),
+            t: rayhit.ray.tnear,
+            uv: Vector2::new(rayhit.hit.u, rayhit.hit.v),
+            geom_id: GeomID::new(rayhit.hit.geomID),
+            prim_id: GeomID::new(rayhit.hit.primID),
+            instance_id: GeomID::new(rayhit.hit.instID[0]),
+        }
+    }
+
+    pub fn occluded(&self, ray: Ray) -> bool {
+        let mut r = RTCRayAligned {
+            ray: ray.into(),
+        };
+        let mut context: RTCIntersectContext = empty_intersect_context();
+        unsafe {
+            rtcOccluded1(self.handle.as_mut_ptr(),
+                &mut context,
+                &mut r.ray);
+        }
+        r.ray.tfar == f32::NEG_INFINITY
     }
 
     pub fn edit(self) -> SceneBuilder {

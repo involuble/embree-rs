@@ -1,29 +1,27 @@
-use std::cmp::max;
-
 use cgmath::*;
 
 use sys::*;
 
-use buffer::*;
 use device::*;
 use geometry::*;
 use type_format::*;
+use scene::BuildQuality;
 
 #[repr(C)]
 pub struct Triangle(u32, u32, u32);
 
-#[repr(C)]
-pub struct Quad(u32, u32, u32, u32);
+// #[repr(C)]
+// pub struct Quad(u32, u32, u32, u32);
 
 impl TypeFormat for Triangle {
     const FORMAT: Format = Format::u32x3;
 }
 
-impl TypeFormat for Quad {
-    const FORMAT: Format = Format::u32x4;
-}
+// impl TypeFormat for Quad {
+//     const FORMAT: Format = Format::u32x4;
+// }
 
-pub trait PolygonType {
+trait PolygonType {
     // const VERTEX_COUNT: u32;
     const POLYGON_TYPE: GeometryType;
 }
@@ -33,91 +31,98 @@ impl PolygonType for Triangle {
     const POLYGON_TYPE: GeometryType = GeometryType::Triangle;
 }
 
-impl PolygonType for Quad {
-    // const VERTEX_COUNT: u32 = 4;
-    const POLYGON_TYPE: GeometryType = GeometryType::Quad;
-}
+// impl PolygonType for Quad {
+//     // const VERTEX_COUNT: u32 = 4;
+//     const POLYGON_TYPE: GeometryType = GeometryType::Quad;
+// }
 
-pub type TriangleGeometry = PolygonGeometry<Triangle>;
-pub type QuadGeometry = PolygonGeometry<Quad>;
+// pub type TriangleGeometry = PolygonGeometry<Triangle>;
+// pub type QuadGeometry = PolygonGeometry<Quad>;
 
 // Internal use constants
 const NORMALS_SLOT: u32 = 0;
-pub const UV_SLOT: u32 = 1;
+const UV_SLOT: u32 = 1;
 
-pub struct PolygonGeometry<P, T1 = Vector3<f32>>
-        where P: TypeFormat, P: PolygonType, P: 'static,
-              T1: TypeFormat, T1: 'static {
+pub struct TriangleMesh {
     pub(crate) handle: GeometryHandle,
-    pub indices: Buffer<P>,
-    pub vertices: Buffer<Point3<f32>>,
-    pub normals: Option<Buffer<Vector3<f32>>>,
-    pub uv_buf: Option<Buffer<Vector2<f32>>>,
-    pub attribs: Option<Buffer<T1>>,
+    pub indices: Vec<Triangle>,
+    pub vertices: Vec<Point3<f32>>,
+    pub normals: Option<Vec<Vector3<f32>>>,
+    pub tex_coords: Option<Vec<Vector2<f32>>>,
+    pub attribs: Option<Vec<f32>>,
 }
 
-impl<P, T1> PolygonGeometry<P, T1>
-        where P: TypeFormat, P: PolygonType, P: 'static,
-            T1: TypeFormat, T1: 'static {
-    pub fn new(device: &Device, index_buffer: Vec<P>, vertex_buffer: Vec<Point3<f32>>) -> Self {
-        assert!(P::POLYGON_TYPE == GeometryType::Triangle ||
-            P::POLYGON_TYPE == GeometryType::Quad,
-            "embree only supports triangles and quads");
-        let handle = GeometryHandle::new(device, P::POLYGON_TYPE);
-        PolygonGeometry {
+impl TriangleMesh {
+    pub fn new(device: &Device, index_buffer: Vec<Triangle>, vertex_buffer: Vec<Point3<f32>>) -> Self {
+        assert!(Triangle::POLYGON_TYPE == GeometryType::Triangle ||
+                Triangle::POLYGON_TYPE == GeometryType::Quad,
+                "embree only supports triangles and quads");
+        let handle = GeometryHandle::new(device, Triangle::POLYGON_TYPE);
+        TriangleMesh {
             handle: handle,
-            indices: Buffer::new(index_buffer),
-            vertices: Buffer::new(vertex_buffer),
+            indices: index_buffer,
+            vertices: vertex_buffer,
             normals: None,
-            uv_buf: None,
+            tex_coords: None,
             attribs: None,
         }
     }
 
     pub fn set_normal_buffer(&mut self, buf: Vec<Vector3<f32>>) {
-        self.normals = Some(Buffer::new(buf));
+        self.normals = Some(buf);
     }
 
-    pub fn set_uv_buffer(&mut self, buf: Vec<Vector2<f32>>) {
-        self.uv_buf = Some(Buffer::new(buf));
+    pub fn set_texcoord_buffer(&mut self, buf: Vec<Vector2<f32>>) {
+        self.tex_coords = Some(buf);
     }
 
-    pub fn set_vertex_attrib_buffer(&mut self, buf: Vec<T1>) {
-        self.attribs = Some(Buffer::new(buf));
+    pub fn set_attrib_buffer(&mut self, buf: Vec<f32>) {
+        self.attribs = Some(buf);
     }
 
-    pub fn commit(mut self) -> Box<Geometry> {
+    pub fn transform_mesh(&mut self, transform: Matrix4<f32>) {
+        for v in self.vertices.iter_mut() {
+            *v = transform.transform_point(*v)
+        }
+        if let Some(ref mut normal_buf) = self.normals {
+            let normal_transform = transform.invert().unwrap().transpose();
+            for n in normal_buf.iter_mut() {
+                *n = normal_transform.transform_vector(*n);
+            }
+        }
+    }
+
+    pub fn set_build_quality(&self, quality: BuildQuality) {
+        self.handle.set_build_quality(quality);
+    }
+
+    pub fn commit(mut self) -> Geometry {
         let mut attrib_count = 0;
         if self.normals.is_some() { attrib_count = NORMALS_SLOT + 1; }
-        if self.normals.is_some() { attrib_count = UV_SLOT + 1; }
+        if self.tex_coords.is_some() { attrib_count = UV_SLOT + 1; }
         if self.attribs.is_some() { attrib_count = 3; }
         
-        self.indices.bind_to_geometry(&self.handle, BufferType::Index, 0);
-        self.vertices.bind_to_geometry(&self.handle, BufferType::Vertex, 0);
+        self.handle.bind_shared_geometry_buffer(&mut self.indices, BufferType::Index, Triangle::FORMAT, 0, 0);
+        self.handle.bind_shared_geometry_buffer(&mut self.vertices, BufferType::Vertex, Format::f32x3, 0, 0);
 
         unsafe { rtcSetGeometryVertexAttributeCount(self.handle.ptr, attrib_count); }
-        if let Some(ref mut buf) = self.normals {
-            buf.bind_to_geometry(&self.handle, BufferType::VertexAttribute, NORMALS_SLOT);
+
+        if let Some(ref mut data) = self.normals {
+            self.handle.bind_shared_geometry_buffer(data, BufferType::VertexAttribute, Format::f32x3, NORMALS_SLOT, 0);
         }
-        if let Some(ref mut buf) = self.uv_buf {
-            buf.bind_to_geometry(&self.handle, BufferType::VertexAttribute, UV_SLOT);
+        if let Some(ref mut data) = self.tex_coords {
+            self.handle.bind_shared_geometry_buffer(data, BufferType::VertexAttribute, Format::f32x2, UV_SLOT, 0);
         }
-        if let Some(ref mut buf) = self.attribs {
-            buf.bind_to_geometry(&self.handle,
-                BufferType::VertexAttribute,
-                max(NORMALS_SLOT, UV_SLOT) + 1);
+        if let Some(ref mut _data) = self.attribs {
+            // TODO
+            // self.handle.bind_shared_geometry_buffer(data, BufferType::VertexAttribute, Format::f32x3, 2, 0);
+            unimplemented!();
         }
 
         unsafe { rtcCommitGeometry(self.handle.ptr); }
 
-        Box::new(self)
-    }
-}
-
-impl<P, T1> Geometry for PolygonGeometry<P, T1>
-        where P: TypeFormat, P: PolygonType, P: 'static,
-            T1: TypeFormat, T1: 'static {
-    fn get_handle(&self) -> &GeometryHandle {
-        &self.handle
+        Geometry {
+            data: GeometryInternal::Tris(self),
+        }
     }
 }
