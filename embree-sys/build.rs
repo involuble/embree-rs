@@ -7,7 +7,6 @@ use std::env;
 use std::fs;
 // use std::error::Error;
 use std::io;
-use std::process;
 
 #[cfg(feature = "bindgen")]
 use bindgen;
@@ -15,8 +14,12 @@ use bindgen;
 #[cfg(feature = "bindgen")]
 fn generate_bindings(include_dir: PathBuf) -> Result<(), io::Error> {
     let bindings_gen = bindgen::Builder::default()
-        .header(embree_dir.join("include/embree3/rtcore.h"))
-        .clang_arg("-I\"C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.10240.0\\ucrt\\\"");
+        .header(include_dir.join("embree3/rtcore.h"))
+        .clang_arg(format!("-IC:/Program Files (x86)/Windows Kits/10/Include/10.0.10240.0/ucrt"))
+        .clang_arg(format!("-IC:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/include"));
+        // .clang_arg(format!("-IC:/Program Files/LLVM/lib/clang/5.0.0/include"))
+        // .clang_arg(format!("-IC:/Program Files (x86)/Windows Kits/8.1/Include/shared"))
+        // .clang_arg(format!("-IC:/Program Files (x86)/Windows Kits/8.1/Include/um"));
     let bindings = bindings_gen.generate()?;
 
     let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
@@ -33,6 +36,7 @@ fn generate_bindings(_: PathBuf) -> Result<(), io::Error> {
 
 fn main() {
     println!("cargo:rerun-if-changed=build.rs");
+    println!("cargo:rerun-if-env-changed=EMBREE_DIR");
 
     if let Ok(path) = env::var("EMBREE_DIR") {
         let embree_dir = PathBuf::from(path);
@@ -43,7 +47,7 @@ fn main() {
         println!("cargo:rustc-link-lib=embree3");
 
         println!("cargo:rustc-link-search={}", embree_dir.join("lib").display());
-        println!("cargo:rustc-link-search=dylib={}", embree_dir.join("bin").display());
+        println!("cargo:rustc-link-search={}", embree_dir.join("bin").display());
 
         println!("cargo:rustc-link-lib=tbb");
         println!("cargo:rustc-link-lib=tbbmalloc");
@@ -56,6 +60,7 @@ fn main() {
         let include_dir = PathBuf::from(lib.include_paths[0].clone());
         generate_bindings(include_dir).expect("Could not generate bindings");
 
+        // Dunno if this is needed
         println!("cargo:rustc-link-lib=tbb");
         println!("cargo:rustc-link-lib=tbbmalloc");
 

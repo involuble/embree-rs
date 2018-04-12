@@ -2,6 +2,7 @@
 name = "embree-sys"
 version = "0.1.0"
 authors = ["Steven <locke9@gmail.com>"]
+links = "embree3"
 build = "build.rs"
 
 [build-dependencies]

@@ -16,13 +16,13 @@ pub struct Geometry {
 }
 
 pub(crate) enum GeometryInternal {
-    Tris(TriangleMesh),
+    Triangles(TriangleMesh),
 }
 
 impl Geometry {
     pub fn handle(&self) -> &GeometryHandle {
         match self.data {
-            GeometryInternal::Tris(ref t) => &t.handle,
+            GeometryInternal::Triangles(ref t) => &t.handle,
         }
     }
 }

@@ -5,7 +5,7 @@ authors = ["Steven <locke9@gmail.com>"]
 
 [dependencies]
 embree-sys = { path = "embree-sys" }
-mint = "0.5"
+# mint = "0.5"
 cgmath = "0.16"
 bitflags = "1.0"
 log = "0.4"
@@ -18,3 +18,7 @@ minifb = "0.10.4"
 derive_more = "0.9"
 num-traits = "0.2"
 # tobj = "0.1.6"
+
+[[example]]
+name = "raytracer"
+path = "examples/raytracer.rs"

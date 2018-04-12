@@ -2,7 +2,6 @@
 extern crate bitflags;
 #[macro_use]
 extern crate log;
-extern crate mint;
 extern crate cgmath;
 extern crate vec_map;
 

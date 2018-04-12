@@ -8,18 +8,50 @@ use type_format::*;
 use scene::BuildQuality;
 
 #[repr(C)]
-pub struct Triangle(u32, u32, u32);
+#[derive(Debug, Copy, Clone)]
+pub struct Triangle {
+    pub v0: u32,
+    pub v1: u32,
+    pub v2: u32,
+}
 
-// #[repr(C)]
-// pub struct Quad(u32, u32, u32, u32);
+impl Triangle {
+    pub fn new(v0: u32, v1: u32, v2: u32) -> Self {
+        Triangle {
+            v0: v0,
+            v1: v1,
+            v2: v2,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct Quad {
+    pub v0: u32,
+    pub v1: u32,
+    pub v2: u32,
+    pub v3: u32,
+}
+
+impl Quad {
+    pub fn new(v0: u32, v1: u32, v2: u32, v3: u32) -> Self {
+        Quad {
+            v0: v0,
+            v1: v1,
+            v2: v2,
+            v3: v3,
+        }
+    }
+}
 
 impl TypeFormat for Triangle {
     const FORMAT: Format = Format::u32x3;
 }
 
-// impl TypeFormat for Quad {
-//     const FORMAT: Format = Format::u32x4;
-// }
+impl TypeFormat for Quad {
+    const FORMAT: Format = Format::u32x4;
+}
 
 trait PolygonType {
     // const VERTEX_COUNT: u32;
@@ -31,13 +63,10 @@ impl PolygonType for Triangle {
     const POLYGON_TYPE: GeometryType = GeometryType::Triangle;
 }
 
-// impl PolygonType for Quad {
-//     // const VERTEX_COUNT: u32 = 4;
-//     const POLYGON_TYPE: GeometryType = GeometryType::Quad;
-// }
-
-// pub type TriangleGeometry = PolygonGeometry<Triangle>;
-// pub type QuadGeometry = PolygonGeometry<Quad>;
+impl PolygonType for Quad {
+    // const VERTEX_COUNT: u32 = 4;
+    const POLYGON_TYPE: GeometryType = GeometryType::Quad;
+}
 
 // Internal use constants
 const NORMALS_SLOT: u32 = 0;
@@ -54,9 +83,6 @@ pub struct TriangleMesh {
 
 impl TriangleMesh {
     pub fn new(device: &Device, index_buffer: Vec<Triangle>, vertex_buffer: Vec<Point3<f32>>) -> Self {
-        assert!(Triangle::POLYGON_TYPE == GeometryType::Triangle ||
-                Triangle::POLYGON_TYPE == GeometryType::Quad,
-                "embree only supports triangles and quads");
         let handle = GeometryHandle::new(device, Triangle::POLYGON_TYPE);
         TriangleMesh {
             handle: handle,
@@ -122,7 +148,7 @@ impl TriangleMesh {
         unsafe { rtcCommitGeometry(self.handle.ptr); }
 
         Geometry {
-            data: GeometryInternal::Tris(self),
+            data: GeometryInternal::Triangles(self),
         }
     }
 }
