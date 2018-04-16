@@ -12,17 +12,37 @@ use type_format::*;
 use polygon_geometry::*;
 
 pub struct Geometry {
-    pub(crate) data: GeometryInternal,
+    pub(crate) internal: GeometryInternal,
+}
+
+pub(crate) trait GeometryData {
+    fn set_geom_id(&mut self, id: GeomID);
+    fn handle(&self) -> &GeometryHandle;
 }
 
 pub(crate) enum GeometryInternal {
     Triangles(TriangleMesh),
+    Other(Box<GeometryData>),
 }
 
 impl Geometry {
+    pub(crate) fn new(geom: GeometryInternal) -> Self {
+        Geometry {
+            internal: geom,
+        }
+    }
+
     pub fn handle(&self) -> &GeometryHandle {
-        match self.data {
+        match self.internal {
             GeometryInternal::Triangles(ref t) => &t.handle,
+            GeometryInternal::Other(ref data) => data.handle(),
+        }
+    }
+
+    pub(crate) fn set_geom_id(&mut self, id: GeomID) {
+        match self.internal {
+            GeometryInternal::Triangles(_) => (),
+            GeometryInternal::Other(ref mut data) => data.set_geom_id(id),
         }
     }
 }
@@ -88,6 +108,8 @@ impl GeometryHandle {
         if buf_type == BufferType::Vertex || buf_type == BufferType::VertexAttribute {
             if mem::size_of::<T>() == 4 {
                 data.reserve(3);
+            } else if mem::size_of::<T>() % 16 == 0 {
+                // Do nothing
             } else {
                 data.reserve(1);
             }
@@ -123,14 +145,14 @@ impl Drop for GeometryHandle {
 pub enum GeometryType {
     Triangle = RTCGeometryType_RTC_GEOMETRY_TYPE_TRIANGLE,
     Quad = RTCGeometryType_RTC_GEOMETRY_TYPE_QUAD,
-    // Subdivision = RTCGeometryType_RTC_GEOMETRY_TYPE_SUBDIVISION;
-    // Curve = RTCGeometryType_RTC_GEOMETRY_TYPE_FLAT_LINEAR_CURVE;
-    // Curve = RTCGeometryType_RTC_GEOMETRY_TYPE_ROUND_BEZIER_CURVE;
-    // Curve = RTCGeometryType_RTC_GEOMETRY_TYPE_FLAT_BEZIER_CURVE;
-    // Curve = RTCGeometryType_RTC_GEOMETRY_TYPE_ROUND_BSPLINE_CURVE;
-    // Curve = RTCGeometryType_RTC_GEOMETRY_TYPE_FLAT_BSPLINE_CURVE;
-    // User = RTCGeometryType_RTC_GEOMETRY_TYPE_USER;
-    // Instance = RTCGeometryType_RTC_GEOMETRY_TYPE_INSTANCE;
+    // Subdivision = RTCGeometryType_RTC_GEOMETRY_TYPE_SUBDIVISION,
+    // Curve = RTCGeometryType_RTC_GEOMETRY_TYPE_FLAT_LINEAR_CURVE,
+    // Curve = RTCGeometryType_RTC_GEOMETRY_TYPE_ROUND_BEZIER_CURVE,
+    // Curve = RTCGeometryType_RTC_GEOMETRY_TYPE_FLAT_BEZIER_CURVE,
+    // Curve = RTCGeometryType_RTC_GEOMETRY_TYPE_ROUND_BSPLINE_CURVE,
+    // Curve = RTCGeometryType_RTC_GEOMETRY_TYPE_FLAT_BSPLINE_CURVE,
+    User = RTCGeometryType_RTC_GEOMETRY_TYPE_USER,
+    // Instance = RTCGeometryType_RTC_GEOMETRY_TYPE_INSTANCE,
 }
 
 into_primitive!(GeometryType, i32);

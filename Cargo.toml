@@ -17,6 +17,7 @@ mopa = "0.2"
 minifb = "0.10.4"
 derive_more = "0.9"
 num-traits = "0.2"
+fern = "0.5"
 # tobj = "0.1.6"
 
 [[example]]

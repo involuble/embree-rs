@@ -1,4 +1,3 @@
-use std::u32;
 use std::f32;
 
 use sys::*;
@@ -6,18 +5,19 @@ use sys::*;
 use cgmath::*;
 use vec_map::*;
 
+use aabb::*;
 use device::Device;
 use geometry::*;
+use ray::*;
 
 pub struct Scene {
-    // TODO
-    pub(crate) handle: SceneHandle,
-    pub(crate) geometries: VecMap<Geometry>,
+    handle: SceneHandle,
+    geometries: VecMap<Geometry>,
 }
 
 pub struct SceneBuilder {
-    pub(crate) handle: SceneHandle,
-    pub(crate) geometries: VecMap<Geometry>,
+    handle: SceneHandle,
+    geometries: VecMap<Geometry>,
 }
 
 #[repr(C)]
@@ -31,7 +31,7 @@ impl SceneHandle {
         SceneHandle { ptr: h }
     }
 
-    pub(crate) fn as_mut_ptr(&self) -> RTCScene {
+    pub(crate) fn as_ptr(&self) -> RTCScene {
         self.ptr
     }
 }
@@ -57,11 +57,13 @@ impl SceneBuilder {
         }
     }
 
-    pub fn attach(&mut self, geometry: Geometry) -> GeomID {
+    pub fn attach(&mut self, mut geometry: Geometry) -> GeomID {
         let id = unsafe { rtcAttachGeometry(self.handle.ptr, geometry.handle().as_ptr()) };
         assert!(!self.geometries.contains_key(id as usize), "Geometry id already assigned");
+        let geom_id = GeomID::new(id);
+        geometry.set_geom_id(geom_id);
         self.geometries.insert(id as usize, geometry);
-        GeomID::new(id)
+        geom_id
     }
 
     pub fn set_build_quality(&self, quality: BuildQuality) {
@@ -77,43 +79,13 @@ impl SceneBuilder {
         SceneFlags::from_bits_truncate(flags)
     }
 
-    pub fn commit(self) -> Scene {
+    pub fn build(self) -> Scene {
         unsafe {
             rtcCommitScene(self.handle.ptr);
         }
         Scene {
             handle: self.handle,
             geometries: self.geometries,
-        }
-    }
-}
-
-#[repr(C)]
-#[repr(align(16))]
-#[derive(Debug, Copy, Clone)]
-pub struct Bounds {
-    pub lower: Vector3<f32>,
-    align0: f32,
-    pub upper: Vector3<f32>,
-    align1: f32,
-}
-
-impl Bounds {
-    pub fn zero() -> Self {
-        Bounds {
-            lower: Vector3::zero(),
-            align0: 0.0,
-            upper: Vector3::zero(),
-            align1: 0.0,
-        }
-    }
-
-    pub fn new(lower: Vector3<f32>, upper: Vector3<f32>) -> Self {
-        Bounds {
-            lower: lower,
-            align0: 0.0,
-            upper: upper,
-            align1: 0.0,
         }
     }
 }
@@ -125,65 +97,17 @@ impl Bounds {
 //     }
 // }
 
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct Ray {
-    pub origin: Point3<f32>,
-    pub tnear: f32,
-    pub dir: Vector3<f32>,
-    pub tfar: f32,
-}
-
-impl Ray {
-}
-
-impl Into<RTCRay> for Ray {
-    fn into(self) -> RTCRay {
-        RTCRay {
-            org_x: self.origin.x,
-            org_y: self.origin.y,
-            org_z: self.origin.z,
-            tnear: self.tnear,
-            dir_x: self.dir.x,
-            dir_y: self.dir.y,
-            dir_z: self.dir.z,
-            time: 0.0,
-            tfar: self.tfar,
-            mask: u32::MAX,
-            id: 0,
-            flags: 0,
-        }
-    }
-}
-
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-#[allow(non_snake_case)]
-pub struct Hit {
-    pub Ng: Vector3<f32>,
-    pub t: f32,
-    pub uv: Vector2<f32>,
-    pub geom_id: GeomID,
-    pub prim_id: GeomID,
-    pub instance_id: GeomID,
-}
-
-impl Hit {
-    pub fn empty() -> Self {
-        Hit {
-            Ng: Vector3::zero(),
-            uv: Vector2::zero(),
-            t: 0.0,
-            geom_id: GeomID::invalid(),
-            prim_id: GeomID::invalid(),
-            instance_id: GeomID::invalid(),
-        }
+// TODO: Could make new struct for this
+fn empty_intersect_context() -> RTCIntersectContext{
+    RTCIntersectContext {
+        flags: 0,
+        filter: None,
+        instID: [INVALID_ID],
     }
 }
 
 #[repr(C)]
 #[repr(align(16))]
-#[derive(Debug, Copy, Clone)]
 struct RTCRayHitAligned {
     pub ray: RTCRay,
     pub hit: RTCHit,
@@ -191,25 +115,21 @@ struct RTCRayHitAligned {
 
 #[repr(C)]
 #[repr(align(16))]
-#[derive(Debug, Copy, Clone)]
 struct RTCRayAligned {
     pub ray: RTCRay,
 }
 
-// TODO: Could make new struct for this
-fn empty_intersect_context() -> RTCIntersectContext{
-    RTCIntersectContext {
-        flags: 0,
-        filter: None,
-        instID: [u32::MAX],
-    }
+#[repr(C)]
+#[repr(align(16))]
+struct RTCBoundsAligned {
+    pub bounds: RTCBounds,
 }
 
 impl Scene {
-    pub fn bounds(&self) -> Bounds {
-        let mut b = Bounds::zero();
-        unsafe { rtcGetSceneBounds(self.handle.ptr, &mut b as *mut Bounds as *mut RTCBounds); }
-        b
+    pub fn bounds(&self) -> AABB {
+        let mut b = RTCBoundsAligned { bounds: AABB::zero().into() };
+        unsafe { rtcGetSceneBounds(self.handle.ptr, &mut b.bounds); }
+        b.bounds.into()
     }
 
     pub fn intersect(&self, ray: Ray) -> Hit {
@@ -222,23 +142,23 @@ impl Scene {
                 Ng_z: 0.0,
                 u: 0.0,
                 v: 0.0,
-                geomID: u32::MAX,
-                primID: u32::MAX,
-                instID: [u32::MAX],
+                geomID: INVALID_ID,
+                primID: INVALID_ID,
+                instID: [INVALID_ID],
             }
         };
         unsafe {
-            rtcIntersect1(self.handle.ptr,
+            rtcIntersect1(self.handle.as_ptr(),
                 &mut context,
                 &mut rayhit as *mut RTCRayHitAligned as *mut RTCRayHit);
         }
         Hit {
-            Ng: Vector3::new(rayhit.hit.Ng_x, rayhit.hit.Ng_y, rayhit.hit.Ng_z),
-            t: rayhit.ray.tnear,
+            Ng: Vector3::new(rayhit.hit.Ng_x, rayhit.hit.Ng_y, rayhit.hit.Ng_z).normalize(),
             uv: Vector2::new(rayhit.hit.u, rayhit.hit.v),
             geom_id: GeomID::new(rayhit.hit.geomID),
             prim_id: GeomID::new(rayhit.hit.primID),
             instance_id: GeomID::new(rayhit.hit.instID[0]),
+            t: rayhit.ray.tfar,
         }
     }
 
@@ -248,7 +168,7 @@ impl Scene {
         };
         let mut context: RTCIntersectContext = empty_intersect_context();
         unsafe {
-            rtcOccluded1(self.handle.as_mut_ptr(),
+            rtcOccluded1(self.handle.as_ptr(),
                 &mut context,
                 &mut r.ray);
         }
@@ -279,5 +199,6 @@ bitflags! {
         const DYNAMIC = RTCSceneFlags_RTC_SCENE_FLAG_DYNAMIC;
         const COMPACT = RTCSceneFlags_RTC_SCENE_FLAG_COMPACT;
         const ROBUST  = RTCSceneFlags_RTC_SCENE_FLAG_ROBUST;
+        // const FILTER_FUNCTION = RTCSceneFlags_RTC_SCENE_FLAG_CONTEXT_FILTER_FUNCTION;
     }
 }

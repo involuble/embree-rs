@@ -73,7 +73,7 @@ const NORMALS_SLOT: u32 = 0;
 const UV_SLOT: u32 = 1;
 
 pub struct TriangleMesh {
-    pub(crate) handle: GeometryHandle,
+    pub handle: GeometryHandle,
     pub indices: Vec<Triangle>,
     pub vertices: Vec<Point3<f32>>,
     pub normals: Option<Vec<Vector3<f32>>>,
@@ -108,7 +108,7 @@ impl TriangleMesh {
 
     pub fn transform_mesh(&mut self, transform: Matrix4<f32>) {
         for v in self.vertices.iter_mut() {
-            *v = transform.transform_point(*v)
+            *v = transform.transform_point(*v);
         }
         if let Some(ref mut normal_buf) = self.normals {
             let normal_transform = transform.invert().unwrap().transpose();
@@ -122,7 +122,7 @@ impl TriangleMesh {
         self.handle.set_build_quality(quality);
     }
 
-    pub fn commit(mut self) -> Geometry {
+    pub fn build(mut self) -> Geometry {
         let mut attrib_count = 0;
         if self.normals.is_some() { attrib_count = NORMALS_SLOT + 1; }
         if self.tex_coords.is_some() { attrib_count = UV_SLOT + 1; }
@@ -147,8 +147,6 @@ impl TriangleMesh {
 
         unsafe { rtcCommitGeometry(self.handle.ptr); }
 
-        Geometry {
-            data: GeometryInternal::Triangles(self),
-        }
+        Geometry::new(GeometryInternal::Triangles(self))
     }
 }
