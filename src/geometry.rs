@@ -22,6 +22,7 @@ pub(crate) trait GeometryData {
 
 pub(crate) enum GeometryInternal {
     Triangles(TriangleMesh),
+    Quads(QuadMesh),
     Other(Box<GeometryData>),
 }
 
@@ -35,6 +36,7 @@ impl Geometry {
     pub fn handle(&self) -> &GeometryHandle {
         match self.internal {
             GeometryInternal::Triangles(ref t) => &t.handle,
+            GeometryInternal::Quads(ref q) => &q.handle,
             GeometryInternal::Other(ref data) => data.handle(),
         }
     }
@@ -42,6 +44,7 @@ impl Geometry {
     pub(crate) fn set_geom_id(&mut self, id: GeomID) {
         match self.internal {
             GeometryInternal::Triangles(_) => (),
+            GeometryInternal::Quads(_) => (),
             GeometryInternal::Other(ref mut data) => data.set_geom_id(id),
         }
     }

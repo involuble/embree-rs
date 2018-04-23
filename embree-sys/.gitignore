@@ -1,5 +1,6 @@
-embree
-embree-3.0.0.x64.windows
 target
 **/*.rs.bk
 Cargo.lock
+embree-3.0.0.x64.windows
+embree3
+readme.pdf

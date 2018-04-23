@@ -17,6 +17,8 @@ pub struct Ray {
 
 impl Ray {
     pub fn new(origin: Point3<f32>, dir: Vector3<f32>, tnear: f32, tfar: f32) -> Self {
+        debug_assert!(tnear >= 0.0, "Invalid tnear");
+        debug_assert!(tfar > tnear, "Invalid tfar");
         Ray {
             origin: origin,
             tnear: tnear,

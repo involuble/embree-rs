@@ -126,7 +126,8 @@ fn main() {
     fern::Dispatch::new()
         // .level(log::LevelFilter::Trace) // Trace is default
         .chain(std::io::stdout())
-        .apply().expect("Unable to initialize logger");
+        .apply()
+        .expect("Unable to initialize logger");
     
     let mut buffer: Vec<u32> = vec![0; WIDTH*HEIGHT];
 

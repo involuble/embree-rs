@@ -51,6 +51,7 @@ impl UserPrimHit {
 pub struct UserGeometry<T: UserPrimitive> {
     pub handle: GeometryHandle,
     id: GeomID,
+    // TODO: Evaluate using smallvec for this
     pub data: Vec<T>,
 }
 
@@ -131,8 +132,8 @@ unsafe extern "C" fn intersect_func<T: UserPrimitive>(args: *const RTCIntersectF
     // TODO: need to expose a way to call rtcFilterIntersection (possibly by passing a closure in)
     let prim_hit = prim.intersect(&ray);
 
-    if ray.in_range(prim_hit.t) {
-        debug_assert!(ray.in_range(prim_hit.t), "Error in intersect function");
+    if prim_hit.t >= 0.0 {
+        debug_assert!(ray.in_range(prim_hit.t), "Intersect function returning distance out of ray bounds");
         hit.Ng_x = prim_hit.Ng.x;
         hit.Ng_y = prim_hit.Ng.y;
         hit.Ng_z = prim_hit.Ng.z;

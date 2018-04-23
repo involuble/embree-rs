@@ -72,19 +72,21 @@ impl PolygonType for Quad {
 const NORMALS_SLOT: u32 = 0;
 const UV_SLOT: u32 = 1;
 
-pub struct TriangleMesh {
+macro_rules! polygon_geometry_def {
+    ($geometryname:ident, $polygon:ty, $geometry_constructor:ident) => (
+pub struct $geometryname {
     pub handle: GeometryHandle,
-    pub indices: Vec<Triangle>,
+    pub indices: Vec<$polygon>,
     pub vertices: Vec<Point3<f32>>,
     pub normals: Option<Vec<Vector3<f32>>>,
     pub tex_coords: Option<Vec<Vector2<f32>>>,
     pub attribs: Option<Vec<f32>>,
 }
 
-impl TriangleMesh {
-    pub fn new(device: &Device, index_buffer: Vec<Triangle>, vertex_buffer: Vec<Point3<f32>>) -> Self {
-        let handle = GeometryHandle::new(device, Triangle::POLYGON_TYPE);
-        TriangleMesh {
+impl $geometryname {
+    pub fn new(device: &Device, index_buffer: Vec<$polygon>, vertex_buffer: Vec<Point3<f32>>) -> Self {
+        let handle = GeometryHandle::new(device, <$polygon>::POLYGON_TYPE);
+        $geometryname {
             handle: handle,
             indices: index_buffer,
             vertices: vertex_buffer,
@@ -128,7 +130,7 @@ impl TriangleMesh {
         if self.tex_coords.is_some() { attrib_count = UV_SLOT + 1; }
         if self.attribs.is_some() { attrib_count = 3; }
         
-        self.handle.bind_shared_geometry_buffer(&mut self.indices, BufferType::Index, Triangle::FORMAT, 0, 0);
+        self.handle.bind_shared_geometry_buffer(&mut self.indices, BufferType::Index, <$polygon>::FORMAT, 0, 0);
         self.handle.bind_shared_geometry_buffer(&mut self.vertices, BufferType::Vertex, Format::f32x3, 0, 0);
 
         unsafe { rtcSetGeometryVertexAttributeCount(self.handle.ptr, attrib_count); }
@@ -147,6 +149,13 @@ impl TriangleMesh {
 
         unsafe { rtcCommitGeometry(self.handle.ptr); }
 
-        Geometry::new(GeometryInternal::Triangles(self))
+        Geometry::new(GeometryInternal::$geometry_constructor(self))
     }
 }
+    )
+}
+
+polygon_geometry_def!(TriangleMesh, Triangle, Triangles);
+
+polygon_geometry_def!(QuadMesh, Quad, Quads);
+
