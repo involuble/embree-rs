@@ -27,5 +27,4 @@ pub use error::*;
 pub use geometry::*;
 pub use polygon_geometry::*;
 pub use ray::*;
-pub use type_format::*;
 pub use user_geometry::*;

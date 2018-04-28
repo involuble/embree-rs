@@ -12,10 +12,6 @@
             "args": [
                 "build"
             ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
             "presentation": {
                 "reveal": "silent",
                 "panel": "dedicated"

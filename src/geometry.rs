@@ -74,7 +74,7 @@ impl GeomID {
     }
 
     pub fn unwrap(&self) -> u32 {
-        assert!(!self.is_invalid());
+        debug_assert!(!self.is_invalid());
         self.id
     }
 }

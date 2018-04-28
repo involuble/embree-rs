@@ -9,7 +9,8 @@ pub(crate) trait TypeFormat {
 #[repr(i32)]
 #[derive(Debug, Copy, Clone)]
 #[allow(non_camel_case_types)]
-pub enum Format {
+#[allow(dead_code)]
+pub(crate) enum Format {
     u32x1  = RTCFormat_RTC_FORMAT_UINT,
     u32x2  = RTCFormat_RTC_FORMAT_UINT2,
     u32x3  = RTCFormat_RTC_FORMAT_UINT3,
@@ -37,7 +38,8 @@ into_primitive!(Format, i32);
 #[repr(i32)]
 #[derive(Debug, Copy, Clone)]
 #[allow(non_camel_case_types)]
-pub enum MatrixFormat {
+#[allow(dead_code)]
+pub(crate) enum MatrixFormat {
     float3x4RowMajor = RTCFormat_RTC_FORMAT_FLOAT3X4_ROW_MAJOR,
     float3x4ColumnMajor = RTCFormat_RTC_FORMAT_FLOAT3X4_COLUMN_MAJOR,
     float4x4ColumnMajor = RTCFormat_RTC_FORMAT_FLOAT4X4_COLUMN_MAJOR,

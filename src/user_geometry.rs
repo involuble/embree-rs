@@ -119,7 +119,7 @@ unsafe extern "C" fn intersect_func<T: UserPrimitive>(args: *const RTCIntersectF
 
     let prim: &T = &geometry.data[(*args).primID as usize];
 
-    assert!((*args).N == 1);
+    debug_assert!((*args).N == 1);
     if *(*args).valid == 0 { return; }
 
     let rayhit = (*args).rayhit as *mut RTCRayHit;

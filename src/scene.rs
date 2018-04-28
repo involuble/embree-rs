@@ -66,11 +66,11 @@ impl SceneBuilder {
         geom_id
     }
 
-    pub fn set_build_quality(&self, quality: BuildQuality) {
+    pub fn set_build_quality(&mut self, quality: BuildQuality) {
         unsafe { rtcSetSceneBuildQuality(self.handle.ptr, quality.into()); }
     }
 
-    pub fn set_flags(&self, flags: SceneFlags) {
+    pub fn set_flags(&mut self, flags: SceneFlags) {
         unsafe { rtcSetSceneFlags(self.handle.ptr, flags.bits()); }
     }
 
@@ -199,6 +199,6 @@ bitflags! {
         const DYNAMIC = RTCSceneFlags_RTC_SCENE_FLAG_DYNAMIC;
         const COMPACT = RTCSceneFlags_RTC_SCENE_FLAG_COMPACT;
         const ROBUST  = RTCSceneFlags_RTC_SCENE_FLAG_ROBUST;
-        // const FILTER_FUNCTION = RTCSceneFlags_RTC_SCENE_FLAG_CONTEXT_FILTER_FUNCTION;
+        // const ENABLE_FILTER_FUNCTION = RTCSceneFlags_RTC_SCENE_FLAG_CONTEXT_FILTER_FUNCTION;
     }
 }

@@ -1,6 +1,8 @@
 #[cfg(feature = "bindgen")]
 extern crate bindgen;
 extern crate pkg_config;
+// #[cfg(target_env = "msvc")]
+// extern crate vcpkg;
 
 use std::path::PathBuf;
 use std::env;
@@ -34,6 +36,24 @@ fn generate_bindings(_: PathBuf) -> Result<(), io::Error> {
     Ok(())
 }
 
+fn try_directory(dir: PathBuf) -> Result<(), ()> {
+    if !dir.is_dir() {
+        return Err(());
+    }
+    let include_dir = dir.join("include");
+    generate_bindings(include_dir).expect("Could not generate bindings");
+
+    println!("cargo:rustc-link-lib=embree3");
+
+    println!("cargo:rustc-link-search={}", dir.join("lib").display());
+    println!("cargo:rustc-link-search={}", dir.join("bin").display());
+
+    println!("cargo:rustc-link-lib=tbb");
+    println!("cargo:rustc-link-lib=tbbmalloc");
+
+    Ok(())
+}
+
 fn main() {
     println!("cargo:rerun-if-changed=build.rs");
     println!("cargo:rerun-if-env-changed=EMBREE_DIR");
@@ -41,19 +61,21 @@ fn main() {
     if let Ok(path) = env::var("EMBREE_DIR") {
         let embree_dir = PathBuf::from(path);
 
-        let include_dir = embree_dir.join("include");
-        generate_bindings(include_dir).expect("Could not generate bindings");
+        let r = try_directory(embree_dir);
 
-        println!("cargo:rustc-link-lib=embree3");
-
-        println!("cargo:rustc-link-search={}", embree_dir.join("lib").display());
-        println!("cargo:rustc-link-search={}", embree_dir.join("bin").display());
-
-        println!("cargo:rustc-link-lib=tbb");
-        println!("cargo:rustc-link-lib=tbbmalloc");
-
-        return;
+        if r.is_ok() {
+            return;
+        }
     }
+
+    // let vc_pkg = vcpkg::Config::new()
+    //     .emit_includes(true)
+    //     .probe("embree");
+    // if let Ok(lib) = vc_pkg {
+    //     let include_dir = lib.include_paths[0].clone();
+    //     generate_bindings(include_dir).expect("Could not generate bindings");
+    //     return;
+    // }
 
     let pkg = pkg_config::Config::new().atleast_version("3.0.0").probe("embree");
     if let Ok(lib) = pkg {
@@ -64,6 +86,10 @@ fn main() {
         println!("cargo:rustc-link-lib=tbb");
         println!("cargo:rustc-link-lib=tbbmalloc");
 
+        return;
+    }
+
+    if let Ok(_) = try_directory(PathBuf::from("C:\\Program Files\\Intel\\Embree3 x64")) {
         return;
     }
 
