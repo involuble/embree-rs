@@ -21,7 +21,7 @@ impl Device {
 
 unsafe extern "C" fn error_callback(_: *mut c_void, error: i32, str: *const c_char) {
     let msg = CStr::from_ptr(str);
-    error!("{:?} (internal error {:?})", ErrorKind::from_i32(error), msg);
+    error!("Embree error {:?}: {:?}", ErrorKind::from_i32(error), msg);
 }
 
 impl Clone for Device {

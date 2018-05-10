@@ -1,10 +1,5 @@
 {
     "version": "2.0.0",
-    "options": {
-        "env": {
-            "EMBREE_DIR": "C:\\Program Files\\Intel\\Embree3 x64"
-        }
-    },
     "tasks": [
         {
             "label": "build",

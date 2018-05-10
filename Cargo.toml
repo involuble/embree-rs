@@ -5,13 +5,13 @@ authors = ["Steven <locke9@gmail.com>"]
 
 [dependencies]
 embree-sys = { path = "embree-sys" }
-# mint = "0.5"
 cgmath = "0.16"
 bitflags = "1.0"
 log = "0.4"
 vec_map = "0.8"
 mopa = "0.2"
 # smallvec = "0.6"
+# memoffset = "0.2.1"
 
 [dev-dependencies]
 minifb = "0.10.4"

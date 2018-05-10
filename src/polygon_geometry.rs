@@ -80,7 +80,7 @@ pub struct $geometryname {
     pub vertices: Vec<Point3<f32>>,
     pub normals: Option<Vec<Vector3<f32>>>,
     pub tex_coords: Option<Vec<Vector2<f32>>>,
-    pub attribs: Option<Vec<f32>>,
+    // pub attribs: Option<Vec<f32>>,
 }
 
 impl $geometryname {
@@ -92,7 +92,7 @@ impl $geometryname {
             vertices: vertex_buffer,
             normals: None,
             tex_coords: None,
-            attribs: None,
+            // attribs: None,
         }
     }
 
@@ -104,16 +104,16 @@ impl $geometryname {
         self.tex_coords = Some(buf);
     }
 
-    pub fn set_attrib_buffer(&mut self, buf: Vec<f32>) {
-        self.attribs = Some(buf);
-    }
+    // pub fn set_attrib_buffer(&mut self, buf: Vec<f32>) {
+    //     self.attribs = Some(buf);
+    // }
 
     pub fn transform_mesh(&mut self, transform: Matrix4<f32>) {
         for v in self.vertices.iter_mut() {
             *v = transform.transform_point(*v);
         }
         if let Some(ref mut normal_buf) = self.normals {
-            let normal_transform = transform.invert().unwrap().transpose();
+            let normal_transform = transform.invert().expect("Transform is non-invertible").transpose();
             for n in normal_buf.iter_mut() {
                 *n = normal_transform.transform_vector(*n);
             }
@@ -128,7 +128,7 @@ impl $geometryname {
         let mut attrib_count = 0;
         if self.normals.is_some() { attrib_count = NORMALS_SLOT + 1; }
         if self.tex_coords.is_some() { attrib_count = UV_SLOT + 1; }
-        if self.attribs.is_some() { attrib_count = 3; }
+        // if self.attribs.is_some() { attrib_count = 3; }
         
         self.handle.bind_shared_geometry_buffer(&mut self.indices, BufferType::Index, <$polygon>::FORMAT, 0, 0);
         self.handle.bind_shared_geometry_buffer(&mut self.vertices, BufferType::Vertex, Format::f32x3, 0, 0);
@@ -141,11 +141,11 @@ impl $geometryname {
         if let Some(ref mut data) = self.tex_coords {
             self.handle.bind_shared_geometry_buffer(data, BufferType::VertexAttribute, Format::f32x2, UV_SLOT, 0);
         }
-        if let Some(ref mut _data) = self.attribs {
-            // TODO
-            // self.handle.bind_shared_geometry_buffer(data, BufferType::VertexAttribute, Format::f32x3, 2, 0);
-            unimplemented!();
-        }
+        // if let Some(ref mut _data) = self.attribs {
+        //     // TODO
+        //     // self.handle.bind_shared_geometry_buffer(data, BufferType::VertexAttribute, Format::f32x3, 2, 0);
+        //     unimplemented!();
+        // }
 
         unsafe { rtcCommitGeometry(self.handle.ptr); }
 
