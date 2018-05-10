@@ -15,7 +15,7 @@ pub struct Geometry {
     pub(crate) internal: GeometryInternal,
 }
 
-pub(crate) trait GeometryData {
+pub(crate) trait GeometryData: Send + Sync {
     fn set_geom_id(&mut self, id: GeomID);
     fn handle(&self) -> &GeometryHandle;
 }
@@ -129,6 +129,9 @@ impl GeometryHandle {
         }
     }
 }
+
+unsafe impl Send for GeometryHandle {}
+unsafe impl Sync for GeometryHandle {}
 
 impl Clone for GeometryHandle {
     fn clone(&self) -> GeometryHandle {

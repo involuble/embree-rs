@@ -36,6 +36,9 @@ impl SceneHandle {
     }
 }
 
+unsafe impl Send for SceneHandle {}
+unsafe impl Sync for SceneHandle {}
+
 impl Clone for SceneHandle {
     fn clone(&self) -> SceneHandle {
         unsafe { rtcRetainScene(self.ptr) }

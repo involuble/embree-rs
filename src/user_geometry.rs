@@ -90,6 +90,9 @@ impl<T: UserPrimitive> UserGeometry<T> {
     }
 }
 
+unsafe impl<T: UserPrimitive> Send for UserGeometry<T> {}
+unsafe impl<T: UserPrimitive> Sync for UserGeometry<T> {}
+
 impl<T: UserPrimitive> GeometryData for UserGeometry<T> {
     fn set_geom_id(&mut self, id: GeomID) {
         self.id = id;
