@@ -1,0 +1,2 @@
+[alias]
+bindgen = ["generate_bindings.sh"]
