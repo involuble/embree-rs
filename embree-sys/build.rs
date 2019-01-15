@@ -104,13 +104,14 @@ fn main() {
     // let _ = Command::new("tar").args(&["-xf", "v3.0.0.zip", "-", "-C", "embree"]).status();
 
     // embree_dir = cmake::Config::new("embree")
-    //     .define("EMBREE_ISA_SSE2", "ON")
-    //     .define("EMBREE_ISA_SSE42", "ON")
-    //     .define("EMBREE_ISA_AVX", "ON")
-    //     .define("EMBREE_ISA_AVX2", "ON")
-    //     .define("EMBREE_ISA_AVX2", "ON")
-    //     .define("EMBREE_ISPC_SUPPORT", "ON")
+    // //     .define("EMBREE_ISA_SSE2", "ON")
+    // //     .define("EMBREE_ISA_SSE42", "ON")
+    // //     .define("EMBREE_ISA_AVX", "ON")
+    // //     .define("EMBREE_ISA_AVX2", "ON")
+    //     .define("EMBREE_MAX_ISA", "AVX2")
+    //     .define("EMBREE_ISPC_SUPPORT", "OFF")
     //     .define("EMBREE_STATIC_LIB", "ON")
     //     .define("EMBREE_TASKING_SYSTEM", "INTERNAL")
+    //     .define("EMBREE_TUTORIALS", "OFF")
     //     .build();
 }
