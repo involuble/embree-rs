@@ -66,6 +66,7 @@ fn try_load_from_directory(dir: PathBuf) -> Result<(), io::Error> {
 
 fn main() {
     println!("cargo:rerun-if-changed=build.rs");
+    println!("cargo:rerun-if-changed=pregenerated_bindings.rs");
     println!("cargo:rerun-if-env-changed=EMBREE_DIR");
 
     if let Ok(path) = env::var("EMBREE_DIR") {

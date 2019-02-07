@@ -44,9 +44,9 @@ macro_rules! into_primitive {
 #[repr(i32)]
 #[derive(Debug, Copy, Clone)]
 pub enum BuildQuality {
-    Low = RTCBuildQuality_RTC_BUILD_QUALITY_LOW,
-    Medium = RTCBuildQuality_RTC_BUILD_QUALITY_MEDIUM,
-    High = RTCBuildQuality_RTC_BUILD_QUALITY_HIGH,
+    Low = RTC_BUILD_QUALITY_LOW,
+    Medium = RTC_BUILD_QUALITY_MEDIUM,
+    High = RTC_BUILD_QUALITY_HIGH,
 }
 
 into_primitive!(BuildQuality, i32);
@@ -60,26 +60,26 @@ pub(crate) trait TypeFormat {
 #[allow(non_camel_case_types)]
 #[allow(dead_code)]
 pub(crate) enum Format {
-    u32x1  = RTCFormat_RTC_FORMAT_UINT,
-    u32x2  = RTCFormat_RTC_FORMAT_UINT2,
-    u32x3  = RTCFormat_RTC_FORMAT_UINT3,
-    u32x4  = RTCFormat_RTC_FORMAT_UINT4,
-    f32x1  = RTCFormat_RTC_FORMAT_FLOAT,
-    f32x2  = RTCFormat_RTC_FORMAT_FLOAT2,
-    f32x3  = RTCFormat_RTC_FORMAT_FLOAT3,
-    f32x4  = RTCFormat_RTC_FORMAT_FLOAT4,
-    f32x5  = RTCFormat_RTC_FORMAT_FLOAT5,
-    f32x6  = RTCFormat_RTC_FORMAT_FLOAT6,
-    f32x7  = RTCFormat_RTC_FORMAT_FLOAT7,
-    f32x8  = RTCFormat_RTC_FORMAT_FLOAT8,
-    f32x9  = RTCFormat_RTC_FORMAT_FLOAT9,
-    f32x10 = RTCFormat_RTC_FORMAT_FLOAT10,
-    f32x11 = RTCFormat_RTC_FORMAT_FLOAT11,
-    f32x12 = RTCFormat_RTC_FORMAT_FLOAT12,
-    f32x13 = RTCFormat_RTC_FORMAT_FLOAT13,
-    f32x14 = RTCFormat_RTC_FORMAT_FLOAT14,
-    f32x15 = RTCFormat_RTC_FORMAT_FLOAT15,
-    f32x16 = RTCFormat_RTC_FORMAT_FLOAT16,
+    u32x1  = RTC_FORMAT_UINT,
+    u32x2  = RTC_FORMAT_UINT2,
+    u32x3  = RTC_FORMAT_UINT3,
+    u32x4  = RTC_FORMAT_UINT4,
+    f32x1  = RTC_FORMAT_FLOAT,
+    f32x2  = RTC_FORMAT_FLOAT2,
+    f32x3  = RTC_FORMAT_FLOAT3,
+    f32x4  = RTC_FORMAT_FLOAT4,
+    f32x5  = RTC_FORMAT_FLOAT5,
+    f32x6  = RTC_FORMAT_FLOAT6,
+    f32x7  = RTC_FORMAT_FLOAT7,
+    f32x8  = RTC_FORMAT_FLOAT8,
+    f32x9  = RTC_FORMAT_FLOAT9,
+    f32x10 = RTC_FORMAT_FLOAT10,
+    f32x11 = RTC_FORMAT_FLOAT11,
+    f32x12 = RTC_FORMAT_FLOAT12,
+    f32x13 = RTC_FORMAT_FLOAT13,
+    f32x14 = RTC_FORMAT_FLOAT14,
+    f32x15 = RTC_FORMAT_FLOAT15,
+    f32x16 = RTC_FORMAT_FLOAT16,
 }
 
 into_primitive!(Format, i32);
@@ -89,9 +89,9 @@ into_primitive!(Format, i32);
 #[allow(non_camel_case_types)]
 #[allow(dead_code)]
 pub(crate) enum MatrixFormat {
-    float3x4RowMajor = RTCFormat_RTC_FORMAT_FLOAT3X4_ROW_MAJOR,
-    float3x4ColumnMajor = RTCFormat_RTC_FORMAT_FLOAT3X4_COLUMN_MAJOR,
-    float4x4ColumnMajor = RTCFormat_RTC_FORMAT_FLOAT4X4_COLUMN_MAJOR,
+    float3x4RowMajor = RTC_FORMAT_FLOAT3X4_ROW_MAJOR,
+    float3x4ColumnMajor = RTC_FORMAT_FLOAT3X4_COLUMN_MAJOR,
+    float4x4ColumnMajor = RTC_FORMAT_FLOAT4X4_COLUMN_MAJOR,
 }
 
 into_primitive!(MatrixFormat, i32);

@@ -7,79 +7,79 @@ pub const RTC_VERSION: u32 = 30400;
 pub const RTC_VERSION_STRING: &'static [u8; 6usize] = b"3.4.0\0";
 pub const RTC_MAX_TIME_STEP_COUNT: u32 = 129;
 pub const RTC_MAX_INSTANCE_LEVEL_COUNT: u32 = 1;
-pub const RTCFormat_RTC_FORMAT_UNDEFINED: RTCFormat = 0;
-pub const RTCFormat_RTC_FORMAT_UCHAR: RTCFormat = 4097;
-pub const RTCFormat_RTC_FORMAT_UCHAR2: RTCFormat = 4098;
-pub const RTCFormat_RTC_FORMAT_UCHAR3: RTCFormat = 4099;
-pub const RTCFormat_RTC_FORMAT_UCHAR4: RTCFormat = 4100;
-pub const RTCFormat_RTC_FORMAT_CHAR: RTCFormat = 8193;
-pub const RTCFormat_RTC_FORMAT_CHAR2: RTCFormat = 8194;
-pub const RTCFormat_RTC_FORMAT_CHAR3: RTCFormat = 8195;
-pub const RTCFormat_RTC_FORMAT_CHAR4: RTCFormat = 8196;
-pub const RTCFormat_RTC_FORMAT_USHORT: RTCFormat = 12289;
-pub const RTCFormat_RTC_FORMAT_USHORT2: RTCFormat = 12290;
-pub const RTCFormat_RTC_FORMAT_USHORT3: RTCFormat = 12291;
-pub const RTCFormat_RTC_FORMAT_USHORT4: RTCFormat = 12292;
-pub const RTCFormat_RTC_FORMAT_SHORT: RTCFormat = 16385;
-pub const RTCFormat_RTC_FORMAT_SHORT2: RTCFormat = 16386;
-pub const RTCFormat_RTC_FORMAT_SHORT3: RTCFormat = 16387;
-pub const RTCFormat_RTC_FORMAT_SHORT4: RTCFormat = 16388;
-pub const RTCFormat_RTC_FORMAT_UINT: RTCFormat = 20481;
-pub const RTCFormat_RTC_FORMAT_UINT2: RTCFormat = 20482;
-pub const RTCFormat_RTC_FORMAT_UINT3: RTCFormat = 20483;
-pub const RTCFormat_RTC_FORMAT_UINT4: RTCFormat = 20484;
-pub const RTCFormat_RTC_FORMAT_INT: RTCFormat = 24577;
-pub const RTCFormat_RTC_FORMAT_INT2: RTCFormat = 24578;
-pub const RTCFormat_RTC_FORMAT_INT3: RTCFormat = 24579;
-pub const RTCFormat_RTC_FORMAT_INT4: RTCFormat = 24580;
-pub const RTCFormat_RTC_FORMAT_ULLONG: RTCFormat = 28673;
-pub const RTCFormat_RTC_FORMAT_ULLONG2: RTCFormat = 28674;
-pub const RTCFormat_RTC_FORMAT_ULLONG3: RTCFormat = 28675;
-pub const RTCFormat_RTC_FORMAT_ULLONG4: RTCFormat = 28676;
-pub const RTCFormat_RTC_FORMAT_LLONG: RTCFormat = 32769;
-pub const RTCFormat_RTC_FORMAT_LLONG2: RTCFormat = 32770;
-pub const RTCFormat_RTC_FORMAT_LLONG3: RTCFormat = 32771;
-pub const RTCFormat_RTC_FORMAT_LLONG4: RTCFormat = 32772;
-pub const RTCFormat_RTC_FORMAT_FLOAT: RTCFormat = 36865;
-pub const RTCFormat_RTC_FORMAT_FLOAT2: RTCFormat = 36866;
-pub const RTCFormat_RTC_FORMAT_FLOAT3: RTCFormat = 36867;
-pub const RTCFormat_RTC_FORMAT_FLOAT4: RTCFormat = 36868;
-pub const RTCFormat_RTC_FORMAT_FLOAT5: RTCFormat = 36869;
-pub const RTCFormat_RTC_FORMAT_FLOAT6: RTCFormat = 36870;
-pub const RTCFormat_RTC_FORMAT_FLOAT7: RTCFormat = 36871;
-pub const RTCFormat_RTC_FORMAT_FLOAT8: RTCFormat = 36872;
-pub const RTCFormat_RTC_FORMAT_FLOAT9: RTCFormat = 36873;
-pub const RTCFormat_RTC_FORMAT_FLOAT10: RTCFormat = 36874;
-pub const RTCFormat_RTC_FORMAT_FLOAT11: RTCFormat = 36875;
-pub const RTCFormat_RTC_FORMAT_FLOAT12: RTCFormat = 36876;
-pub const RTCFormat_RTC_FORMAT_FLOAT13: RTCFormat = 36877;
-pub const RTCFormat_RTC_FORMAT_FLOAT14: RTCFormat = 36878;
-pub const RTCFormat_RTC_FORMAT_FLOAT15: RTCFormat = 36879;
-pub const RTCFormat_RTC_FORMAT_FLOAT16: RTCFormat = 36880;
-pub const RTCFormat_RTC_FORMAT_FLOAT2X2_ROW_MAJOR: RTCFormat = 37154;
-pub const RTCFormat_RTC_FORMAT_FLOAT2X3_ROW_MAJOR: RTCFormat = 37155;
-pub const RTCFormat_RTC_FORMAT_FLOAT2X4_ROW_MAJOR: RTCFormat = 37156;
-pub const RTCFormat_RTC_FORMAT_FLOAT3X2_ROW_MAJOR: RTCFormat = 37170;
-pub const RTCFormat_RTC_FORMAT_FLOAT3X3_ROW_MAJOR: RTCFormat = 37171;
-pub const RTCFormat_RTC_FORMAT_FLOAT3X4_ROW_MAJOR: RTCFormat = 37172;
-pub const RTCFormat_RTC_FORMAT_FLOAT4X2_ROW_MAJOR: RTCFormat = 37186;
-pub const RTCFormat_RTC_FORMAT_FLOAT4X3_ROW_MAJOR: RTCFormat = 37187;
-pub const RTCFormat_RTC_FORMAT_FLOAT4X4_ROW_MAJOR: RTCFormat = 37188;
-pub const RTCFormat_RTC_FORMAT_FLOAT2X2_COLUMN_MAJOR: RTCFormat = 37410;
-pub const RTCFormat_RTC_FORMAT_FLOAT2X3_COLUMN_MAJOR: RTCFormat = 37411;
-pub const RTCFormat_RTC_FORMAT_FLOAT2X4_COLUMN_MAJOR: RTCFormat = 37412;
-pub const RTCFormat_RTC_FORMAT_FLOAT3X2_COLUMN_MAJOR: RTCFormat = 37426;
-pub const RTCFormat_RTC_FORMAT_FLOAT3X3_COLUMN_MAJOR: RTCFormat = 37427;
-pub const RTCFormat_RTC_FORMAT_FLOAT3X4_COLUMN_MAJOR: RTCFormat = 37428;
-pub const RTCFormat_RTC_FORMAT_FLOAT4X2_COLUMN_MAJOR: RTCFormat = 37442;
-pub const RTCFormat_RTC_FORMAT_FLOAT4X3_COLUMN_MAJOR: RTCFormat = 37443;
-pub const RTCFormat_RTC_FORMAT_FLOAT4X4_COLUMN_MAJOR: RTCFormat = 37444;
-pub const RTCFormat_RTC_FORMAT_GRID: RTCFormat = 40961;
+pub const RTC_FORMAT_UNDEFINED: RTCFormat = 0;
+pub const RTC_FORMAT_UCHAR: RTCFormat = 4097;
+pub const RTC_FORMAT_UCHAR2: RTCFormat = 4098;
+pub const RTC_FORMAT_UCHAR3: RTCFormat = 4099;
+pub const RTC_FORMAT_UCHAR4: RTCFormat = 4100;
+pub const RTC_FORMAT_CHAR: RTCFormat = 8193;
+pub const RTC_FORMAT_CHAR2: RTCFormat = 8194;
+pub const RTC_FORMAT_CHAR3: RTCFormat = 8195;
+pub const RTC_FORMAT_CHAR4: RTCFormat = 8196;
+pub const RTC_FORMAT_USHORT: RTCFormat = 12289;
+pub const RTC_FORMAT_USHORT2: RTCFormat = 12290;
+pub const RTC_FORMAT_USHORT3: RTCFormat = 12291;
+pub const RTC_FORMAT_USHORT4: RTCFormat = 12292;
+pub const RTC_FORMAT_SHORT: RTCFormat = 16385;
+pub const RTC_FORMAT_SHORT2: RTCFormat = 16386;
+pub const RTC_FORMAT_SHORT3: RTCFormat = 16387;
+pub const RTC_FORMAT_SHORT4: RTCFormat = 16388;
+pub const RTC_FORMAT_UINT: RTCFormat = 20481;
+pub const RTC_FORMAT_UINT2: RTCFormat = 20482;
+pub const RTC_FORMAT_UINT3: RTCFormat = 20483;
+pub const RTC_FORMAT_UINT4: RTCFormat = 20484;
+pub const RTC_FORMAT_INT: RTCFormat = 24577;
+pub const RTC_FORMAT_INT2: RTCFormat = 24578;
+pub const RTC_FORMAT_INT3: RTCFormat = 24579;
+pub const RTC_FORMAT_INT4: RTCFormat = 24580;
+pub const RTC_FORMAT_ULLONG: RTCFormat = 28673;
+pub const RTC_FORMAT_ULLONG2: RTCFormat = 28674;
+pub const RTC_FORMAT_ULLONG3: RTCFormat = 28675;
+pub const RTC_FORMAT_ULLONG4: RTCFormat = 28676;
+pub const RTC_FORMAT_LLONG: RTCFormat = 32769;
+pub const RTC_FORMAT_LLONG2: RTCFormat = 32770;
+pub const RTC_FORMAT_LLONG3: RTCFormat = 32771;
+pub const RTC_FORMAT_LLONG4: RTCFormat = 32772;
+pub const RTC_FORMAT_FLOAT: RTCFormat = 36865;
+pub const RTC_FORMAT_FLOAT2: RTCFormat = 36866;
+pub const RTC_FORMAT_FLOAT3: RTCFormat = 36867;
+pub const RTC_FORMAT_FLOAT4: RTCFormat = 36868;
+pub const RTC_FORMAT_FLOAT5: RTCFormat = 36869;
+pub const RTC_FORMAT_FLOAT6: RTCFormat = 36870;
+pub const RTC_FORMAT_FLOAT7: RTCFormat = 36871;
+pub const RTC_FORMAT_FLOAT8: RTCFormat = 36872;
+pub const RTC_FORMAT_FLOAT9: RTCFormat = 36873;
+pub const RTC_FORMAT_FLOAT10: RTCFormat = 36874;
+pub const RTC_FORMAT_FLOAT11: RTCFormat = 36875;
+pub const RTC_FORMAT_FLOAT12: RTCFormat = 36876;
+pub const RTC_FORMAT_FLOAT13: RTCFormat = 36877;
+pub const RTC_FORMAT_FLOAT14: RTCFormat = 36878;
+pub const RTC_FORMAT_FLOAT15: RTCFormat = 36879;
+pub const RTC_FORMAT_FLOAT16: RTCFormat = 36880;
+pub const RTC_FORMAT_FLOAT2X2_ROW_MAJOR: RTCFormat = 37154;
+pub const RTC_FORMAT_FLOAT2X3_ROW_MAJOR: RTCFormat = 37155;
+pub const RTC_FORMAT_FLOAT2X4_ROW_MAJOR: RTCFormat = 37156;
+pub const RTC_FORMAT_FLOAT3X2_ROW_MAJOR: RTCFormat = 37170;
+pub const RTC_FORMAT_FLOAT3X3_ROW_MAJOR: RTCFormat = 37171;
+pub const RTC_FORMAT_FLOAT3X4_ROW_MAJOR: RTCFormat = 37172;
+pub const RTC_FORMAT_FLOAT4X2_ROW_MAJOR: RTCFormat = 37186;
+pub const RTC_FORMAT_FLOAT4X3_ROW_MAJOR: RTCFormat = 37187;
+pub const RTC_FORMAT_FLOAT4X4_ROW_MAJOR: RTCFormat = 37188;
+pub const RTC_FORMAT_FLOAT2X2_COLUMN_MAJOR: RTCFormat = 37410;
+pub const RTC_FORMAT_FLOAT2X3_COLUMN_MAJOR: RTCFormat = 37411;
+pub const RTC_FORMAT_FLOAT2X4_COLUMN_MAJOR: RTCFormat = 37412;
+pub const RTC_FORMAT_FLOAT3X2_COLUMN_MAJOR: RTCFormat = 37426;
+pub const RTC_FORMAT_FLOAT3X3_COLUMN_MAJOR: RTCFormat = 37427;
+pub const RTC_FORMAT_FLOAT3X4_COLUMN_MAJOR: RTCFormat = 37428;
+pub const RTC_FORMAT_FLOAT4X2_COLUMN_MAJOR: RTCFormat = 37442;
+pub const RTC_FORMAT_FLOAT4X3_COLUMN_MAJOR: RTCFormat = 37443;
+pub const RTC_FORMAT_FLOAT4X4_COLUMN_MAJOR: RTCFormat = 37444;
+pub const RTC_FORMAT_GRID: RTCFormat = 40961;
 pub type RTCFormat = i32;
-pub const RTCBuildQuality_RTC_BUILD_QUALITY_LOW: RTCBuildQuality = 0;
-pub const RTCBuildQuality_RTC_BUILD_QUALITY_MEDIUM: RTCBuildQuality = 1;
-pub const RTCBuildQuality_RTC_BUILD_QUALITY_HIGH: RTCBuildQuality = 2;
-pub const RTCBuildQuality_RTC_BUILD_QUALITY_REFIT: RTCBuildQuality = 3;
+pub const RTC_BUILD_QUALITY_LOW: RTCBuildQuality = 0;
+pub const RTC_BUILD_QUALITY_MEDIUM: RTCBuildQuality = 1;
+pub const RTC_BUILD_QUALITY_HIGH: RTCBuildQuality = 2;
+pub const RTC_BUILD_QUALITY_REFIT: RTCBuildQuality = 3;
 pub type RTCBuildQuality = i32;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -99,11 +99,9 @@ pub struct RTCLinearBounds {
     pub bounds0: RTCBounds,
     pub bounds1: RTCBounds,
 }
-pub const RTCIntersectContextFlags_RTC_INTERSECT_CONTEXT_FLAG_NONE: RTCIntersectContextFlags = 0;
-pub const RTCIntersectContextFlags_RTC_INTERSECT_CONTEXT_FLAG_INCOHERENT: RTCIntersectContextFlags =
-    0;
-pub const RTCIntersectContextFlags_RTC_INTERSECT_CONTEXT_FLAG_COHERENT: RTCIntersectContextFlags =
-    1;
+pub const RTC_INTERSECT_CONTEXT_FLAG_NONE: RTCIntersectContextFlags = 0;
+pub const RTC_INTERSECT_CONTEXT_FLAG_INCOHERENT: RTCIntersectContextFlags = 0;
+pub const RTC_INTERSECT_CONTEXT_FLAG_COHERENT: RTCIntersectContextFlags = 1;
 pub type RTCIntersectContextFlags = i32;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -139,27 +137,26 @@ extern "C" {
 extern "C" {
     pub fn rtcReleaseDevice(device: RTCDevice);
 }
-pub const RTCDeviceProperty_RTC_DEVICE_PROPERTY_VERSION: RTCDeviceProperty = 0;
-pub const RTCDeviceProperty_RTC_DEVICE_PROPERTY_VERSION_MAJOR: RTCDeviceProperty = 1;
-pub const RTCDeviceProperty_RTC_DEVICE_PROPERTY_VERSION_MINOR: RTCDeviceProperty = 2;
-pub const RTCDeviceProperty_RTC_DEVICE_PROPERTY_VERSION_PATCH: RTCDeviceProperty = 3;
-pub const RTCDeviceProperty_RTC_DEVICE_PROPERTY_NATIVE_RAY4_SUPPORTED: RTCDeviceProperty = 32;
-pub const RTCDeviceProperty_RTC_DEVICE_PROPERTY_NATIVE_RAY8_SUPPORTED: RTCDeviceProperty = 33;
-pub const RTCDeviceProperty_RTC_DEVICE_PROPERTY_NATIVE_RAY16_SUPPORTED: RTCDeviceProperty = 34;
-pub const RTCDeviceProperty_RTC_DEVICE_PROPERTY_RAY_STREAM_SUPPORTED: RTCDeviceProperty = 35;
-pub const RTCDeviceProperty_RTC_DEVICE_PROPERTY_RAY_MASK_SUPPORTED: RTCDeviceProperty = 64;
-pub const RTCDeviceProperty_RTC_DEVICE_PROPERTY_BACKFACE_CULLING_ENABLED: RTCDeviceProperty = 65;
-pub const RTCDeviceProperty_RTC_DEVICE_PROPERTY_FILTER_FUNCTION_SUPPORTED: RTCDeviceProperty = 66;
-pub const RTCDeviceProperty_RTC_DEVICE_PROPERTY_IGNORE_INVALID_RAYS_ENABLED: RTCDeviceProperty = 67;
-pub const RTCDeviceProperty_RTC_DEVICE_PROPERTY_TRIANGLE_GEOMETRY_SUPPORTED: RTCDeviceProperty = 96;
-pub const RTCDeviceProperty_RTC_DEVICE_PROPERTY_QUAD_GEOMETRY_SUPPORTED: RTCDeviceProperty = 97;
-pub const RTCDeviceProperty_RTC_DEVICE_PROPERTY_SUBDIVISION_GEOMETRY_SUPPORTED: RTCDeviceProperty =
-    98;
-pub const RTCDeviceProperty_RTC_DEVICE_PROPERTY_CURVE_GEOMETRY_SUPPORTED: RTCDeviceProperty = 99;
-pub const RTCDeviceProperty_RTC_DEVICE_PROPERTY_USER_GEOMETRY_SUPPORTED: RTCDeviceProperty = 100;
-pub const RTCDeviceProperty_RTC_DEVICE_PROPERTY_POINT_GEOMETRY_SUPPORTED: RTCDeviceProperty = 101;
-pub const RTCDeviceProperty_RTC_DEVICE_PROPERTY_TASKING_SYSTEM: RTCDeviceProperty = 128;
-pub const RTCDeviceProperty_RTC_DEVICE_PROPERTY_JOIN_COMMIT_SUPPORTED: RTCDeviceProperty = 129;
+pub const RTC_DEVICE_PROPERTY_VERSION: RTCDeviceProperty = 0;
+pub const RTC_DEVICE_PROPERTY_VERSION_MAJOR: RTCDeviceProperty = 1;
+pub const RTC_DEVICE_PROPERTY_VERSION_MINOR: RTCDeviceProperty = 2;
+pub const RTC_DEVICE_PROPERTY_VERSION_PATCH: RTCDeviceProperty = 3;
+pub const RTC_DEVICE_PROPERTY_NATIVE_RAY4_SUPPORTED: RTCDeviceProperty = 32;
+pub const RTC_DEVICE_PROPERTY_NATIVE_RAY8_SUPPORTED: RTCDeviceProperty = 33;
+pub const RTC_DEVICE_PROPERTY_NATIVE_RAY16_SUPPORTED: RTCDeviceProperty = 34;
+pub const RTC_DEVICE_PROPERTY_RAY_STREAM_SUPPORTED: RTCDeviceProperty = 35;
+pub const RTC_DEVICE_PROPERTY_RAY_MASK_SUPPORTED: RTCDeviceProperty = 64;
+pub const RTC_DEVICE_PROPERTY_BACKFACE_CULLING_ENABLED: RTCDeviceProperty = 65;
+pub const RTC_DEVICE_PROPERTY_FILTER_FUNCTION_SUPPORTED: RTCDeviceProperty = 66;
+pub const RTC_DEVICE_PROPERTY_IGNORE_INVALID_RAYS_ENABLED: RTCDeviceProperty = 67;
+pub const RTC_DEVICE_PROPERTY_TRIANGLE_GEOMETRY_SUPPORTED: RTCDeviceProperty = 96;
+pub const RTC_DEVICE_PROPERTY_QUAD_GEOMETRY_SUPPORTED: RTCDeviceProperty = 97;
+pub const RTC_DEVICE_PROPERTY_SUBDIVISION_GEOMETRY_SUPPORTED: RTCDeviceProperty = 98;
+pub const RTC_DEVICE_PROPERTY_CURVE_GEOMETRY_SUPPORTED: RTCDeviceProperty = 99;
+pub const RTC_DEVICE_PROPERTY_USER_GEOMETRY_SUPPORTED: RTCDeviceProperty = 100;
+pub const RTC_DEVICE_PROPERTY_POINT_GEOMETRY_SUPPORTED: RTCDeviceProperty = 101;
+pub const RTC_DEVICE_PROPERTY_TASKING_SYSTEM: RTCDeviceProperty = 128;
+pub const RTC_DEVICE_PROPERTY_JOIN_COMMIT_SUPPORTED: RTCDeviceProperty = 129;
 pub type RTCDeviceProperty = i32;
 extern "C" {
     pub fn rtcGetDeviceProperty(device: RTCDevice, prop: RTCDeviceProperty) -> isize;
@@ -167,13 +164,13 @@ extern "C" {
 extern "C" {
     pub fn rtcSetDeviceProperty(device: RTCDevice, prop: RTCDeviceProperty, value: isize);
 }
-pub const RTCError_RTC_ERROR_NONE: RTCError = 0;
-pub const RTCError_RTC_ERROR_UNKNOWN: RTCError = 1;
-pub const RTCError_RTC_ERROR_INVALID_ARGUMENT: RTCError = 2;
-pub const RTCError_RTC_ERROR_INVALID_OPERATION: RTCError = 3;
-pub const RTCError_RTC_ERROR_OUT_OF_MEMORY: RTCError = 4;
-pub const RTCError_RTC_ERROR_UNSUPPORTED_CPU: RTCError = 5;
-pub const RTCError_RTC_ERROR_CANCELLED: RTCError = 6;
+pub const RTC_ERROR_NONE: RTCError = 0;
+pub const RTC_ERROR_UNKNOWN: RTCError = 1;
+pub const RTC_ERROR_INVALID_ARGUMENT: RTCError = 2;
+pub const RTC_ERROR_INVALID_OPERATION: RTCError = 3;
+pub const RTC_ERROR_OUT_OF_MEMORY: RTCError = 4;
+pub const RTC_ERROR_UNSUPPORTED_CPU: RTCError = 5;
+pub const RTC_ERROR_CANCELLED: RTCError = 6;
 pub type RTCError = i32;
 extern "C" {
     pub fn rtcGetDeviceError(device: RTCDevice) -> RTCError;
@@ -202,20 +199,20 @@ extern "C" {
         userPtr: *mut ::std::os::raw::c_void,
     );
 }
-pub const RTCBufferType_RTC_BUFFER_TYPE_INDEX: RTCBufferType = 0;
-pub const RTCBufferType_RTC_BUFFER_TYPE_VERTEX: RTCBufferType = 1;
-pub const RTCBufferType_RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE: RTCBufferType = 2;
-pub const RTCBufferType_RTC_BUFFER_TYPE_NORMAL: RTCBufferType = 3;
-pub const RTCBufferType_RTC_BUFFER_TYPE_TANGENT: RTCBufferType = 4;
-pub const RTCBufferType_RTC_BUFFER_TYPE_GRID: RTCBufferType = 8;
-pub const RTCBufferType_RTC_BUFFER_TYPE_FACE: RTCBufferType = 16;
-pub const RTCBufferType_RTC_BUFFER_TYPE_LEVEL: RTCBufferType = 17;
-pub const RTCBufferType_RTC_BUFFER_TYPE_EDGE_CREASE_INDEX: RTCBufferType = 18;
-pub const RTCBufferType_RTC_BUFFER_TYPE_EDGE_CREASE_WEIGHT: RTCBufferType = 19;
-pub const RTCBufferType_RTC_BUFFER_TYPE_VERTEX_CREASE_INDEX: RTCBufferType = 20;
-pub const RTCBufferType_RTC_BUFFER_TYPE_VERTEX_CREASE_WEIGHT: RTCBufferType = 21;
-pub const RTCBufferType_RTC_BUFFER_TYPE_HOLE: RTCBufferType = 22;
-pub const RTCBufferType_RTC_BUFFER_TYPE_FLAGS: RTCBufferType = 32;
+pub const RTC_BUFFER_TYPE_INDEX: RTCBufferType = 0;
+pub const RTC_BUFFER_TYPE_VERTEX: RTCBufferType = 1;
+pub const RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE: RTCBufferType = 2;
+pub const RTC_BUFFER_TYPE_NORMAL: RTCBufferType = 3;
+pub const RTC_BUFFER_TYPE_TANGENT: RTCBufferType = 4;
+pub const RTC_BUFFER_TYPE_GRID: RTCBufferType = 8;
+pub const RTC_BUFFER_TYPE_FACE: RTCBufferType = 16;
+pub const RTC_BUFFER_TYPE_LEVEL: RTCBufferType = 17;
+pub const RTC_BUFFER_TYPE_EDGE_CREASE_INDEX: RTCBufferType = 18;
+pub const RTC_BUFFER_TYPE_EDGE_CREASE_WEIGHT: RTCBufferType = 19;
+pub const RTC_BUFFER_TYPE_VERTEX_CREASE_INDEX: RTCBufferType = 20;
+pub const RTC_BUFFER_TYPE_VERTEX_CREASE_WEIGHT: RTCBufferType = 21;
+pub const RTC_BUFFER_TYPE_HOLE: RTCBufferType = 22;
+pub const RTC_BUFFER_TYPE_FLAGS: RTCBufferType = 32;
 pub type RTCBufferType = i32;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -439,34 +436,34 @@ pub struct RTCGeometryTy {
     _unused: [u8; 0],
 }
 pub type RTCGeometry = *mut RTCGeometryTy;
-pub const RTCGeometryType_RTC_GEOMETRY_TYPE_TRIANGLE: RTCGeometryType = 0;
-pub const RTCGeometryType_RTC_GEOMETRY_TYPE_QUAD: RTCGeometryType = 1;
-pub const RTCGeometryType_RTC_GEOMETRY_TYPE_GRID: RTCGeometryType = 2;
-pub const RTCGeometryType_RTC_GEOMETRY_TYPE_SUBDIVISION: RTCGeometryType = 8;
-pub const RTCGeometryType_RTC_GEOMETRY_TYPE_FLAT_LINEAR_CURVE: RTCGeometryType = 17;
-pub const RTCGeometryType_RTC_GEOMETRY_TYPE_ROUND_BEZIER_CURVE: RTCGeometryType = 24;
-pub const RTCGeometryType_RTC_GEOMETRY_TYPE_FLAT_BEZIER_CURVE: RTCGeometryType = 25;
-pub const RTCGeometryType_RTC_GEOMETRY_TYPE_NORMAL_ORIENTED_BEZIER_CURVE: RTCGeometryType = 26;
-pub const RTCGeometryType_RTC_GEOMETRY_TYPE_ROUND_BSPLINE_CURVE: RTCGeometryType = 32;
-pub const RTCGeometryType_RTC_GEOMETRY_TYPE_FLAT_BSPLINE_CURVE: RTCGeometryType = 33;
-pub const RTCGeometryType_RTC_GEOMETRY_TYPE_NORMAL_ORIENTED_BSPLINE_CURVE: RTCGeometryType = 34;
-pub const RTCGeometryType_RTC_GEOMETRY_TYPE_ROUND_HERMITE_CURVE: RTCGeometryType = 40;
-pub const RTCGeometryType_RTC_GEOMETRY_TYPE_FLAT_HERMITE_CURVE: RTCGeometryType = 41;
-pub const RTCGeometryType_RTC_GEOMETRY_TYPE_NORMAL_ORIENTED_HERMITE_CURVE: RTCGeometryType = 42;
-pub const RTCGeometryType_RTC_GEOMETRY_TYPE_SPHERE_POINT: RTCGeometryType = 50;
-pub const RTCGeometryType_RTC_GEOMETRY_TYPE_DISC_POINT: RTCGeometryType = 51;
-pub const RTCGeometryType_RTC_GEOMETRY_TYPE_ORIENTED_DISC_POINT: RTCGeometryType = 52;
-pub const RTCGeometryType_RTC_GEOMETRY_TYPE_USER: RTCGeometryType = 120;
-pub const RTCGeometryType_RTC_GEOMETRY_TYPE_INSTANCE: RTCGeometryType = 121;
+pub const RTC_GEOMETRY_TYPE_TRIANGLE: RTCGeometryType = 0;
+pub const RTC_GEOMETRY_TYPE_QUAD: RTCGeometryType = 1;
+pub const RTC_GEOMETRY_TYPE_GRID: RTCGeometryType = 2;
+pub const RTC_GEOMETRY_TYPE_SUBDIVISION: RTCGeometryType = 8;
+pub const RTC_GEOMETRY_TYPE_FLAT_LINEAR_CURVE: RTCGeometryType = 17;
+pub const RTC_GEOMETRY_TYPE_ROUND_BEZIER_CURVE: RTCGeometryType = 24;
+pub const RTC_GEOMETRY_TYPE_FLAT_BEZIER_CURVE: RTCGeometryType = 25;
+pub const RTC_GEOMETRY_TYPE_NORMAL_ORIENTED_BEZIER_CURVE: RTCGeometryType = 26;
+pub const RTC_GEOMETRY_TYPE_ROUND_BSPLINE_CURVE: RTCGeometryType = 32;
+pub const RTC_GEOMETRY_TYPE_FLAT_BSPLINE_CURVE: RTCGeometryType = 33;
+pub const RTC_GEOMETRY_TYPE_NORMAL_ORIENTED_BSPLINE_CURVE: RTCGeometryType = 34;
+pub const RTC_GEOMETRY_TYPE_ROUND_HERMITE_CURVE: RTCGeometryType = 40;
+pub const RTC_GEOMETRY_TYPE_FLAT_HERMITE_CURVE: RTCGeometryType = 41;
+pub const RTC_GEOMETRY_TYPE_NORMAL_ORIENTED_HERMITE_CURVE: RTCGeometryType = 42;
+pub const RTC_GEOMETRY_TYPE_SPHERE_POINT: RTCGeometryType = 50;
+pub const RTC_GEOMETRY_TYPE_DISC_POINT: RTCGeometryType = 51;
+pub const RTC_GEOMETRY_TYPE_ORIENTED_DISC_POINT: RTCGeometryType = 52;
+pub const RTC_GEOMETRY_TYPE_USER: RTCGeometryType = 120;
+pub const RTC_GEOMETRY_TYPE_INSTANCE: RTCGeometryType = 121;
 pub type RTCGeometryType = i32;
-pub const RTCSubdivisionMode_RTC_SUBDIVISION_MODE_NO_BOUNDARY: RTCSubdivisionMode = 0;
-pub const RTCSubdivisionMode_RTC_SUBDIVISION_MODE_SMOOTH_BOUNDARY: RTCSubdivisionMode = 1;
-pub const RTCSubdivisionMode_RTC_SUBDIVISION_MODE_PIN_CORNERS: RTCSubdivisionMode = 2;
-pub const RTCSubdivisionMode_RTC_SUBDIVISION_MODE_PIN_BOUNDARY: RTCSubdivisionMode = 3;
-pub const RTCSubdivisionMode_RTC_SUBDIVISION_MODE_PIN_ALL: RTCSubdivisionMode = 4;
+pub const RTC_SUBDIVISION_MODE_NO_BOUNDARY: RTCSubdivisionMode = 0;
+pub const RTC_SUBDIVISION_MODE_SMOOTH_BOUNDARY: RTCSubdivisionMode = 1;
+pub const RTC_SUBDIVISION_MODE_PIN_CORNERS: RTCSubdivisionMode = 2;
+pub const RTC_SUBDIVISION_MODE_PIN_BOUNDARY: RTCSubdivisionMode = 3;
+pub const RTC_SUBDIVISION_MODE_PIN_ALL: RTCSubdivisionMode = 4;
 pub type RTCSubdivisionMode = i32;
-pub const RTCCurveFlags_RTC_CURVE_FLAG_NEIGHBOR_LEFT: RTCCurveFlags = 1;
-pub const RTCCurveFlags_RTC_CURVE_FLAG_NEIGHBOR_RIGHT: RTCCurveFlags = 2;
+pub const RTC_CURVE_FLAG_NEIGHBOR_LEFT: RTCCurveFlags = 1;
+pub const RTC_CURVE_FLAG_NEIGHBOR_RIGHT: RTCCurveFlags = 2;
 pub type RTCCurveFlags = i32;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -780,11 +777,11 @@ pub struct RTCGrid {
     pub width: ::std::os::raw::c_ushort,
     pub height: ::std::os::raw::c_ushort,
 }
-pub const RTCSceneFlags_RTC_SCENE_FLAG_NONE: RTCSceneFlags = 0;
-pub const RTCSceneFlags_RTC_SCENE_FLAG_DYNAMIC: RTCSceneFlags = 1;
-pub const RTCSceneFlags_RTC_SCENE_FLAG_COMPACT: RTCSceneFlags = 2;
-pub const RTCSceneFlags_RTC_SCENE_FLAG_ROBUST: RTCSceneFlags = 4;
-pub const RTCSceneFlags_RTC_SCENE_FLAG_CONTEXT_FILTER_FUNCTION: RTCSceneFlags = 8;
+pub const RTC_SCENE_FLAG_NONE: RTCSceneFlags = 0;
+pub const RTC_SCENE_FLAG_DYNAMIC: RTCSceneFlags = 1;
+pub const RTC_SCENE_FLAG_COMPACT: RTCSceneFlags = 2;
+pub const RTC_SCENE_FLAG_ROBUST: RTCSceneFlags = 4;
+pub const RTC_SCENE_FLAG_CONTEXT_FILTER_FUNCTION: RTCSceneFlags = 8;
 pub type RTCSceneFlags = i32;
 extern "C" {
     pub fn rtcNewScene(device: RTCDevice) -> RTCScene;
@@ -1034,8 +1031,8 @@ pub type RTCSplitPrimitiveFunction = ::std::option::Option<
         userPtr: *mut ::std::os::raw::c_void,
     ),
 >;
-pub const RTCBuildFlags_RTC_BUILD_FLAG_NONE: RTCBuildFlags = 0;
-pub const RTCBuildFlags_RTC_BUILD_FLAG_DYNAMIC: RTCBuildFlags = 1;
+pub const RTC_BUILD_FLAG_NONE: RTCBuildFlags = 0;
+pub const RTC_BUILD_FLAG_DYNAMIC: RTCBuildFlags = 1;
 pub type RTCBuildFlags = i32;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

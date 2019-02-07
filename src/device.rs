@@ -28,8 +28,8 @@ pub struct Device {
 impl Device {
     pub fn new() -> Self {
         let device = unsafe { rtcNewDevice(ptr::null()) };
-        let err = ErrorKind::from_i32(unsafe { rtcGetDeviceError(ptr::null_mut()) });
-        assert!(err == ErrorKind::None);
+        let err = unsafe { rtcGetDeviceError(ptr::null_mut()) };
+        assert!(err == RTC_ERROR_NONE);
 
         unsafe {
             rtcSetDeviceErrorFunction(device, Some(error_callback), ptr::null_mut());
@@ -41,7 +41,7 @@ impl Device {
     pub fn last_error(&self) -> Result<(), ErrorKind> {
         let err = unsafe { rtcGetDeviceError(self.ptr) };
         match err {
-            RTCError_RTC_ERROR_NONE => Ok(()),
+            RTC_ERROR_NONE => Ok(()),
             _ => Err(ErrorKind::from_i32(err)),
         }
     }

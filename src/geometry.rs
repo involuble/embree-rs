@@ -112,16 +112,16 @@ impl Drop for GeometryHandle {
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum GeometryType {
-    Triangle = RTCGeometryType_RTC_GEOMETRY_TYPE_TRIANGLE,
-    Quad = RTCGeometryType_RTC_GEOMETRY_TYPE_QUAD,
-    // Grid = RTCGeometryType_RTC_GEOMETRY_TYPE_GRID,
-    // Subdivision = RTCGeometryType_RTC_GEOMETRY_TYPE_SUBDIVISION,
+    Triangle = RTC_GEOMETRY_TYPE_TRIANGLE,
+    Quad = RTC_GEOMETRY_TYPE_QUAD,
+    // Grid = RTC_GEOMETRY_TYPE_GRID,
+    // Subdivision = RTC_GEOMETRY_TYPE_SUBDIVISION,
     //  TODO: various curve types...
-    Sphere = RTCGeometryType_RTC_GEOMETRY_TYPE_SPHERE_POINT,
-    // RayFacingDisc = RTCGeometryType_RTC_GEOMETRY_TYPE_DISC_POINT,
-    Disc = RTCGeometryType_RTC_GEOMETRY_TYPE_ORIENTED_DISC_POINT,
-    User = RTCGeometryType_RTC_GEOMETRY_TYPE_USER,
-    // Instance = RTCGeometryType_RTC_GEOMETRY_TYPE_INSTANCE,
+    Sphere = RTC_GEOMETRY_TYPE_SPHERE_POINT,
+    // RayFacingDisc = RTC_GEOMETRY_TYPE_DISC_POINT,
+    Disc = RTC_GEOMETRY_TYPE_ORIENTED_DISC_POINT,
+    User = RTC_GEOMETRY_TYPE_USER,
+    // Instance = RTC_GEOMETRY_TYPE_INSTANCE,
 }
 
 into_primitive!(GeometryType, i32);
@@ -129,20 +129,20 @@ into_primitive!(GeometryType, i32);
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub(crate) enum BufferType {
-    Index  = RTCBufferType_RTC_BUFFER_TYPE_INDEX,
-    Vertex = RTCBufferType_RTC_BUFFER_TYPE_VERTEX,
-    VertexAttribute = RTCBufferType_RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE,
-    Normal = RTCBufferType_RTC_BUFFER_TYPE_NORMAL,
-    // Tangent = RTCBufferType_RTC_BUFFER_TYPE_TANGENT,
-    // Grid = RTCBufferType_RTC_BUFFER_TYPE_GRID,
-    // Face = RTCBufferType_RTC_BUFFER_TYPE_FACE,
-    // Level = RTCBufferType_RTC_BUFFER_TYPE_LEVEL,
-    // EdgeCreaseIndex = RTCBufferType_RTC_BUFFER_TYPE_EDGE_CREASE_INDEX,
-    // EdgeCreaseWeight = RTCBufferType_RTC_BUFFER_TYPE_EDGE_CREASE_WEIGHT,
-    // VertexCreaseIndex = RTCBufferType_RTC_BUFFER_TYPE_VERTEX_CREASE_INDEX,
-    // VertexCreaseWeight = RTCBufferType_RTC_BUFFER_TYPE_VERTEX_CREASE_WEIGHT,
-    // Hole = RTCBufferType_RTC_BUFFER_TYPE_HOLE,
-    // Flags = RTCBufferType_RTC_BUFFER_TYPE_FLAGS,
+    Index  = RTC_BUFFER_TYPE_INDEX,
+    Vertex = RTC_BUFFER_TYPE_VERTEX,
+    VertexAttribute = RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE,
+    Normal = RTC_BUFFER_TYPE_NORMAL,
+    // Tangent = RTC_BUFFER_TYPE_TANGENT,
+    // Grid = RTC_BUFFER_TYPE_GRID,
+    // Face = RTC_BUFFER_TYPE_FACE,
+    // Level = RTC_BUFFER_TYPE_LEVEL,
+    // EdgeCreaseIndex = RTC_BUFFER_TYPE_EDGE_CREASE_INDEX,
+    // EdgeCreaseWeight = RTC_BUFFER_TYPE_EDGE_CREASE_WEIGHT,
+    // VertexCreaseIndex = RTC_BUFFER_TYPE_VERTEX_CREASE_INDEX,
+    // VertexCreaseWeight = RTC_BUFFER_TYPE_VERTEX_CREASE_WEIGHT,
+    // Hole = RTC_BUFFER_TYPE_HOLE,
+    // Flags = RTC_BUFFER_TYPE_FLAGS,
 }
 
 into_primitive!(BufferType, i32);

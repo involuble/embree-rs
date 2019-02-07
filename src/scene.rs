@@ -110,8 +110,8 @@ impl SceneBuilder {
 
 // bitflags! {
 //     pub struct IntersectionContextFlags: i32 {
-//         const INCOHERENT = RTCIntersectContextFlags_RTC_INTERSECT_CONTEXT_FLAG_INCOHERENT;
-//         const COHERENT = RTCIntersectContextFlags_RTC_INTERSECT_CONTEXT_FLAG_COHERENT;
+//         const INCOHERENT = RTC_INTERSECT_CONTEXT_FLAG_INCOHERENT;
+//         const COHERENT = RTC_INTERSECT_CONTEXT_FLAG_COHERENT;
 //     }
 // }
 
@@ -217,9 +217,9 @@ impl Scene {
 bitflags! {
     #[repr(C)]
     pub struct SceneFlags: i32 {
-        const DYNAMIC = RTCSceneFlags_RTC_SCENE_FLAG_DYNAMIC;
-        const COMPACT = RTCSceneFlags_RTC_SCENE_FLAG_COMPACT;
-        const ROBUST  = RTCSceneFlags_RTC_SCENE_FLAG_ROBUST;
-        // const ENABLE_FILTER_FUNCTION = RTCSceneFlags_RTC_SCENE_FLAG_CONTEXT_FILTER_FUNCTION;
+        const DYNAMIC = RTC_SCENE_FLAG_DYNAMIC;
+        const COMPACT = RTC_SCENE_FLAG_COMPACT;
+        const ROBUST  = RTC_SCENE_FLAG_ROBUST;
+        // const ENABLE_FILTER_FUNCTION = RTC_SCENE_FLAG_CONTEXT_FILTER_FUNCTION;
     }
 }
