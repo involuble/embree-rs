@@ -4,26 +4,22 @@ use std::u32;
 
 use sys::*;
 
-use cgmath;
-
 use device::Device;
-use scene::BuildQuality;
-use type_format::*;
+use common::*;
 use polygon_geometry::*;
+use user_geometry::*;
+use point_geometry::*;
 
 pub struct Geometry {
     pub(crate) internal: GeometryInternal,
 }
 
-pub(crate) trait GeometryData: Send + Sync {
-    fn set_geom_id(&mut self, id: GeomID);
-    fn handle(&self) -> &GeometryHandle;
-}
-
 pub(crate) enum GeometryInternal {
     Triangles(TriangleMesh),
     Quads(QuadMesh),
-    Other(Box<GeometryData>),
+    Spheres(SphereGeometry),
+    Discs(DiscGeometry),
+    User(ErasedUserGeometry),
 }
 
 impl Geometry {
@@ -37,45 +33,10 @@ impl Geometry {
         match self.internal {
             GeometryInternal::Triangles(ref t) => &t.handle,
             GeometryInternal::Quads(ref q) => &q.handle,
-            GeometryInternal::Other(ref data) => data.handle(),
+            GeometryInternal::Spheres(ref s) => &s.handle,
+            GeometryInternal::Discs(ref d) => &d.handle,
+            GeometryInternal::User(ref u) => &u.handle,
         }
-    }
-
-    pub(crate) fn set_geom_id(&mut self, id: GeomID) {
-        match self.internal {
-            GeometryInternal::Triangles(_) => (),
-            GeometryInternal::Quads(_) => (),
-            GeometryInternal::Other(ref mut data) => data.set_geom_id(id),
-        }
-    }
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub struct GeomID {
-    id: u32,
-}
-
-pub const INVALID_ID: u32 = u32::MAX;
-
-impl GeomID {
-    pub(crate) fn new(id: u32) -> Self {
-        GeomID { id: id }
-    }
-
-    pub fn invalid() -> Self {
-        GeomID {
-            id: INVALID_ID,
-        }
-    }
-
-    pub fn is_invalid(&self) -> bool {
-        self.id == INVALID_ID
-    }
-
-    pub fn unwrap(&self) -> u32 {
-        debug_assert!(!self.is_invalid());
-        self.id
     }
 }
 
@@ -98,16 +59,16 @@ impl GeometryHandle {
         unsafe { rtcSetGeometryBuildQuality(self.ptr, quality.into()); }
     }
 
-    #[allow(dead_code)]
-    pub(crate) fn set_instance_transform(&self, transform: &cgmath::Matrix4<f32>) {
-        unsafe {
-            rtcSetGeometryTransform(self.ptr, 0,
-                cgmath::Matrix4::FORMAT.into(),
-                transform.as_ptr() as *const c_void);
-        }
-    }
+    // pub(crate) fn set_instance_transform(&self, transform: &cgmath::Matrix4<f32>) {
+    //     unsafe {
+    //         rtcSetGeometryTransform(self.ptr, 0,
+    //             cgmath::Matrix4::FORMAT.into(),
+    //             transform.as_ptr() as *const c_void);
+    //     }
+    // }
 
     pub(crate) fn bind_shared_geometry_buffer<T>(&self, data: &mut Vec<T>, buf_type: BufferType, format: Format, slot: u32, byte_offset: usize) {
+        // TODO: This can reallocate and isn't safe
         if buf_type == BufferType::Vertex || buf_type == BufferType::VertexAttribute {
             if mem::size_of::<T>() == 4 {
                 data.reserve(3);
@@ -117,6 +78,8 @@ impl GeometryHandle {
                 data.reserve(1);
             }
         }
+        debug_assert!(byte_offset % 4 == 0, "offset must be 4 byte aligned");
+        debug_assert!(mem::size_of::<T>() % 4 == 0, "stride must be 4 byte aligned");
         unsafe {
             rtcSetSharedGeometryBuffer(self.ptr,
                 buf_type.into(),
@@ -151,12 +114,12 @@ impl Drop for GeometryHandle {
 pub enum GeometryType {
     Triangle = RTCGeometryType_RTC_GEOMETRY_TYPE_TRIANGLE,
     Quad = RTCGeometryType_RTC_GEOMETRY_TYPE_QUAD,
+    // Grid = RTCGeometryType_RTC_GEOMETRY_TYPE_GRID,
     // Subdivision = RTCGeometryType_RTC_GEOMETRY_TYPE_SUBDIVISION,
-    // Curve = RTCGeometryType_RTC_GEOMETRY_TYPE_FLAT_LINEAR_CURVE,
-    // Curve = RTCGeometryType_RTC_GEOMETRY_TYPE_ROUND_BEZIER_CURVE,
-    // Curve = RTCGeometryType_RTC_GEOMETRY_TYPE_FLAT_BEZIER_CURVE,
-    // Curve = RTCGeometryType_RTC_GEOMETRY_TYPE_ROUND_BSPLINE_CURVE,
-    // Curve = RTCGeometryType_RTC_GEOMETRY_TYPE_FLAT_BSPLINE_CURVE,
+    //  TODO: various curve types...
+    Sphere = RTCGeometryType_RTC_GEOMETRY_TYPE_SPHERE_POINT,
+    // RayFacingDisc = RTCGeometryType_RTC_GEOMETRY_TYPE_DISC_POINT,
+    Disc = RTCGeometryType_RTC_GEOMETRY_TYPE_ORIENTED_DISC_POINT,
     User = RTCGeometryType_RTC_GEOMETRY_TYPE_USER,
     // Instance = RTCGeometryType_RTC_GEOMETRY_TYPE_INSTANCE,
 }
@@ -169,6 +132,9 @@ pub(crate) enum BufferType {
     Index  = RTCBufferType_RTC_BUFFER_TYPE_INDEX,
     Vertex = RTCBufferType_RTC_BUFFER_TYPE_VERTEX,
     VertexAttribute = RTCBufferType_RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE,
+    Normal = RTCBufferType_RTC_BUFFER_TYPE_NORMAL,
+    // Tangent = RTCBufferType_RTC_BUFFER_TYPE_TANGENT,
+    // Grid = RTCBufferType_RTC_BUFFER_TYPE_GRID,
     // Face = RTCBufferType_RTC_BUFFER_TYPE_FACE,
     // Level = RTCBufferType_RTC_BUFFER_TYPE_LEVEL,
     // EdgeCreaseIndex = RTCBufferType_RTC_BUFFER_TYPE_EDGE_CREASE_INDEX,

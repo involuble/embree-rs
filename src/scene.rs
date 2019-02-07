@@ -6,8 +6,10 @@ use cgmath::*;
 use vec_map::*;
 
 use aabb::*;
+use common::*;
 use device::Device;
 use geometry::*;
+use user_geometry::*;
 use ray::*;
 
 pub struct Scene {
@@ -23,6 +25,7 @@ pub struct SceneBuilder {
 #[repr(C)]
 pub struct SceneHandle {
     pub(crate) ptr: RTCScene,
+    // device_handle: Device,
 }
 
 impl SceneHandle {
@@ -60,12 +63,20 @@ impl SceneBuilder {
         }
     }
 
-    pub fn attach(&mut self, mut geometry: Geometry) -> GeomID {
+    pub fn attach(&mut self, geometry: Geometry) -> GeomID {
         let id = unsafe { rtcAttachGeometry(self.handle.ptr, geometry.handle().as_ptr()) };
         assert!(!self.geometries.contains_key(id as usize), "Geometry id already assigned");
         let geom_id = GeomID::new(id);
-        geometry.set_geom_id(geom_id);
         self.geometries.insert(id as usize, geometry);
+        geom_id
+    }
+
+    pub fn attach_user_geometry<T: UserPrimitive>(&mut self, geometry: BuiltUserGeometry<T>) -> GeomID {
+        let mut geometry = geometry.inner;
+        let id = unsafe { rtcAttachGeometry(self.handle.ptr, geometry.handle.as_ptr()) };
+        let geom_id = GeomID::new(id);
+        geometry.update_geom_id(geom_id);
+        self.geometries.insert(id as usize, Geometry::new(GeometryInternal::User(geometry.into_erased())));
         geom_id
     }
 
@@ -92,6 +103,10 @@ impl SceneBuilder {
         }
     }
 }
+
+// unsafe extern "C" fn scene_progress_monitor_callback(ptr: *mut c_void, n: f64) -> bool {
+//     true
+// }
 
 // bitflags! {
 //     pub struct IntersectionContextFlags: i32 {
@@ -128,6 +143,15 @@ struct RTCBoundsAligned {
     pub bounds: RTCBounds,
 }
 
+// struct GeometryQueryHandle<'a> {
+//     ptr: RTCGeometry,
+//     phantom: ::std::marker::PhantomData<&'a ()>,
+// }
+
+// impl<'a> GeometryQueryHandle<'a> {
+//     fn interpolate() {}
+// }
+
 impl Scene {
     pub fn bounds(&self) -> AABB {
         let mut b = RTCBoundsAligned { bounds: AABB::zero().into() };
@@ -160,8 +184,8 @@ impl Scene {
             uv: Vector2::new(rayhit.hit.u, rayhit.hit.v),
             geom_id: GeomID::new(rayhit.hit.geomID),
             prim_id: GeomID::new(rayhit.hit.primID),
-            instance_id: GeomID::new(rayhit.hit.instID[0]),
             t: rayhit.ray.tfar,
+            // instance_id: GeomID::new(rayhit.hit.instID[0]),
         }
     }
 
@@ -178,6 +202,10 @@ impl Scene {
         r.ray.tfar == f32::NEG_INFINITY
     }
 
+    // fn query(&self, id: GeomID) -> GeometryQueryHandle<'_> {
+    //     unimplemented!()
+    // }
+
     pub fn edit(self) -> SceneBuilder {
         SceneBuilder {
             handle: self.handle,
@@ -185,16 +213,6 @@ impl Scene {
         }
     }
 }
-
-#[repr(i32)]
-#[derive(Debug, Copy, Clone)]
-pub enum BuildQuality {
-    Low = RTCBuildQuality_RTC_BUILD_QUALITY_LOW,
-    Medium = RTCBuildQuality_RTC_BUILD_QUALITY_MEDIUM,
-    High = RTCBuildQuality_RTC_BUILD_QUALITY_HIGH,
-}
-
-into_primitive!(BuildQuality, i32);
 
 bitflags! {
     #[repr(C)]

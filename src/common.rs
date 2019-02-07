@@ -1,6 +1,55 @@
+use std::u32;
+
 use sys::*;
 
-use cgmath;
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct GeomID {
+    id: u32,
+}
+
+pub const INVALID_ID: u32 = u32::MAX;
+
+impl GeomID {
+    pub(crate) fn new(id: u32) -> Self {
+        GeomID { id: id }
+    }
+
+    pub fn invalid() -> Self {
+        GeomID {
+            id: INVALID_ID,
+        }
+    }
+
+    pub fn is_invalid(&self) -> bool {
+        self.id == INVALID_ID
+    }
+
+    pub fn unwrap(&self) -> u32 {
+        debug_assert!(!self.is_invalid());
+        self.id
+    }
+}
+
+macro_rules! into_primitive {
+    ($enum_name:ty, $prim:ty) => (
+        impl Into<$prim> for $enum_name {
+            fn into(self) -> $prim {
+                unsafe { ::std::mem::transmute::<$enum_name, $prim>(self) }
+            }
+        }
+    )
+}
+
+#[repr(i32)]
+#[derive(Debug, Copy, Clone)]
+pub enum BuildQuality {
+    Low = RTCBuildQuality_RTC_BUILD_QUALITY_LOW,
+    Medium = RTCBuildQuality_RTC_BUILD_QUALITY_MEDIUM,
+    High = RTCBuildQuality_RTC_BUILD_QUALITY_HIGH,
+}
+
+into_primitive!(BuildQuality, i32);
 
 pub(crate) trait TypeFormat {
     const FORMAT: Format;

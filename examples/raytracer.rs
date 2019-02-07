@@ -22,7 +22,8 @@ const HEIGHT: usize = 400;
 
 const CAMERA_POS: [f32; 3] = [3.0, 4.0, 6.0];
 
-const SUN: [f32; 3] = [0.1, 1.0, -0.3];
+/// Vector pointing towards the sun
+const SUN_DIR: [f32; 3] = [0.1, 1.0, -0.3];
 
 const AMBIENT: f32 = 0.1;
 
@@ -87,8 +88,8 @@ pub fn build_scene(device: &Device) -> Scene {
     let cube = TriangleMesh::new(device, Vec::from(CUBE_INDICES.as_ref()), Vec::from(CUBE_VERTICES.as_ref()));
     let _ = scene.attach(cube.build());
 
-    let sphere = UserGeometry::new(device, vec![Sphere { center: Point3::new(-3.0, 0.0, 0.0), radius: 1.0 }]);
-    scene.attach(sphere.build());
+    let sphere = UserGeometry::new_realloc(device, vec![Sphere { center: Point3::new(-3.0, 0.0, 0.0), radius: 1.0 }]);
+    scene.attach_user_geometry(sphere.build());
 
     scene.set_build_quality(BuildQuality::Medium);
     scene.set_flags(SceneFlags::ROBUST | SceneFlags::COMPACT);
@@ -97,7 +98,7 @@ pub fn build_scene(device: &Device) -> Scene {
 }
 
 pub fn render_scene(buffer: &mut Vec<u32>, scene: &Scene, camera: &Camera) {
-    let sun_dir = Vector3::from(SUN).normalize();
+    let sun_dir = Vector3::from(SUN_DIR).normalize();
 
     buffer.iter_mut().enumerate().for_each(|(index, value)| {
         let x = index % WIDTH;
@@ -115,7 +116,7 @@ pub fn render_scene(buffer: &mut Vec<u32>, scene: &Scene, camera: &Camera) {
             let shadowing = if shadow_hit.is_hit() { 0.0 } else { 1.0 };
 
             let lighting: f32 = AMBIENT + shadowing * (1.0 - AMBIENT) * clamp(dot(hit.Ng, sun_dir), 0.0, 1.0);
-            assert!(lighting <= 1.0);
+            debug_assert!(lighting <= 1.0);
             let colour = COLOURS[hit.geom_id.unwrap() as usize] * lighting;
             *value = colour.to_rgba8();
         }
@@ -124,7 +125,7 @@ pub fn render_scene(buffer: &mut Vec<u32>, scene: &Scene, camera: &Camera) {
 
 fn main() {
     fern::Dispatch::new()
-        // .level(log::LevelFilter::Trace) // Trace is default
+        .level(log::LevelFilter::Error) // Trace is default
         .chain(std::io::stdout())
         .apply()
         .expect("Unable to initialize logger");

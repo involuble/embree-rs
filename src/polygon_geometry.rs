@@ -3,9 +3,8 @@ use cgmath::*;
 use sys::*;
 
 use device::*;
+use common::*;
 use geometry::*;
-use type_format::*;
-use scene::BuildQuality;
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -25,6 +24,9 @@ impl Triangle {
     }
 }
 
+/// A quad is defined as a pair of triangles (v0, v1, v3) & (v2, v3, v1).
+/// All of the vertices should be co-planar
+/// Triangles and quads can be mixed by using a quad with v2 == v3
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct Quad {
@@ -75,7 +77,7 @@ const UV_SLOT: u32 = 1;
 macro_rules! polygon_geometry_def {
     ($geometryname:ident, $polygon:ty, $geometry_constructor:ident) => (
 pub struct $geometryname {
-    pub handle: GeometryHandle,
+    pub(crate) handle: GeometryHandle,
     pub indices: Vec<$polygon>,
     pub vertices: Vec<Point3<f32>>,
     pub normals: Option<Vec<Vector3<f32>>>,
@@ -156,6 +158,4 @@ impl $geometryname {
 }
 
 polygon_geometry_def!(TriangleMesh, Triangle, Triangles);
-
 polygon_geometry_def!(QuadMesh, Quad, Quads);
-

@@ -4,7 +4,7 @@ use sys::*;
 
 use cgmath::*;
 
-use geometry::GeomID;
+use common::GeomID;
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -74,8 +74,8 @@ pub struct Hit {
     pub uv: Vector2<f32>,
     pub geom_id: GeomID,
     pub prim_id: GeomID,
-    pub instance_id: GeomID,
     pub t: f32,
+    // pub instance_id: GeomID,
 }
 
 impl Hit {
@@ -83,10 +83,10 @@ impl Hit {
         Hit {
             Ng: Vector3::zero(),
             uv: Vector2::zero(),
-            t: 0.0,
             geom_id: GeomID::invalid(),
             prim_id: GeomID::invalid(),
-            instance_id: GeomID::invalid(),
+            t: 0.0,
+            // instance_id: GeomID::invalid(),
         }
     }
 

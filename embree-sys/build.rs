@@ -1,8 +1,9 @@
+extern crate pkg_config;
+// #[cfg(all(feature = "vcpkg"), target_env = "msvc"))]
+// extern crate vcpkg;
+
 #[cfg(feature = "bindgen")]
 extern crate bindgen;
-extern crate pkg_config;
-// #[cfg(target_env = "msvc")]
-// extern crate vcpkg;
 
 use std::path::PathBuf;
 use std::env;
@@ -36,17 +37,26 @@ fn generate_bindings(_: PathBuf) -> Result<(), io::Error> {
     Ok(())
 }
 
-fn try_directory(dir: PathBuf) -> Result<(), ()> {
+fn try_load_from_directory(dir: PathBuf) -> Result<(), io::Error> {
     if !dir.is_dir() {
-        return Err(());
+        return Err(io::ErrorKind::InvalidInput.into());
     }
     let include_dir = dir.join("include");
-    generate_bindings(include_dir).expect("Could not generate bindings");
-
-    println!("cargo:rustc-link-lib=embree3");
+    generate_bindings(include_dir)?;
+    
+    let bin_dir = dir.join("bin");
+    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
+    
+    for dll in ["embree3.dll", "tbb.dll", "tbbmalloc.dll"].iter() {
+        fs::copy(bin_dir.join(dll), out_path.join(dll))?;
+    }
 
     println!("cargo:rustc-link-search={}", dir.join("lib").display());
-    println!("cargo:rustc-link-search={}", dir.join("bin").display());
+
+    println!("cargo:rustc-link-search=native={}", out_path.display());
+    //println!("cargo:rustc-link-search=native={}", bin_dir.display());
+    
+    println!("cargo:rustc-link-lib=embree3");
 
     println!("cargo:rustc-link-lib=tbb");
     println!("cargo:rustc-link-lib=tbbmalloc");
@@ -61,16 +71,17 @@ fn main() {
     if let Ok(path) = env::var("EMBREE_DIR") {
         let embree_dir = PathBuf::from(path);
 
-        let r = try_directory(embree_dir);
+        let r = try_load_from_directory(embree_dir);
 
         if r.is_ok() {
             return;
         }
     }
 
+    // #[cfg(all(feature = "vcpkg"), target_env = "msvc"))]
     // let vc_pkg = vcpkg::Config::new()
     //     .emit_includes(true)
-    //     .probe("embree");
+    //     .find_package("embree3");
     // if let Ok(lib) = vc_pkg {
     //     let include_dir = lib.include_paths[0].clone();
     //     generate_bindings(include_dir).expect("Could not generate bindings");
@@ -79,7 +90,7 @@ fn main() {
 
     let pkg = pkg_config::Config::new().atleast_version("3.0.0").probe("embree");
     if let Ok(lib) = pkg {
-        let include_dir = PathBuf::from(lib.include_paths[0].clone());
+        let include_dir = lib.include_paths[0].clone();
         generate_bindings(include_dir).expect("Could not generate bindings");
 
         // Dunno if this is needed
@@ -89,17 +100,17 @@ fn main() {
         return;
     }
 
-    if let Ok(_) = try_directory(PathBuf::from("C:\\Program Files\\Intel\\Embree3 x64")) {
+    // Default install location
+    if let Ok(_) = try_load_from_directory(PathBuf::from("C:\\Program Files\\Intel\\Embree3 x64")) {
         return;
     }
 
-    panic!("Couldn't find embree: set environment variable EMBREE_DIR");
+    panic!("Couldn't find Embree: set environment variable EMBREE_DIR");
 
     // if !Path::new("embree/.git").exists() {
     //     Command::new("git").args(&["submodule", "update", "--init"]).status().unwrap();
     // }
 
-    // //https://github.com/embree/embree/releases
     // let _ = Command::new("curl").args(&["-O", "https://github.com/embree/embree/archive/v3.0.0.zip"]).status();
     // let _ = Command::new("tar").args(&["-xf", "v3.0.0.zip", "-", "-C", "embree"]).status();
 
