@@ -5,7 +5,6 @@ use sys::*;
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum ErrorKind {
-    None = RTC_ERROR_NONE,
     Unknown = RTC_ERROR_UNKNOWN,
     InvalidArgument = RTC_ERROR_INVALID_ARGUMENT,
     InvalidOperation = RTC_ERROR_INVALID_OPERATION,
@@ -17,14 +16,13 @@ pub enum ErrorKind {
 impl ErrorKind {
     pub fn from_i32(err: i32) -> Self {
         match err {
-            RTC_ERROR_NONE => ErrorKind::None,
             RTC_ERROR_UNKNOWN => ErrorKind::Unknown,
             RTC_ERROR_INVALID_ARGUMENT => ErrorKind::InvalidArgument,
             RTC_ERROR_INVALID_OPERATION => ErrorKind::InvalidOperation,
             RTC_ERROR_OUT_OF_MEMORY => ErrorKind::OutOfMemory,
             RTC_ERROR_UNSUPPORTED_CPU => ErrorKind::UnsupportedCPU,
             RTC_ERROR_CANCELLED => ErrorKind::Cancelled,
-            // RTC_ERROR_NONE => panic!("cannot have a none error"),
+            RTC_ERROR_NONE => panic!("cannot have a none error"),
             _ => ErrorKind::Unknown,
         }
     }
@@ -33,13 +31,12 @@ impl ErrorKind {
 impl ErrorKind {
     fn as_str(&self) -> &'static str {
         match self {
-            ErrorKind::None => "none",
+            ErrorKind::Unknown => "unknown",
             ErrorKind::InvalidArgument => "invalid argument",
             ErrorKind::InvalidOperation => "invalid operation",
             ErrorKind::OutOfMemory => "out of memory",
             ErrorKind::UnsupportedCPU => "unsupported CPU",
             ErrorKind::Cancelled => "cancelled",
-            _ => "unknown",
         }
     }
 }

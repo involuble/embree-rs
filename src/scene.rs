@@ -1,3 +1,4 @@
+use std::ffi::c_void;
 use std::f32;
 
 use sys::*;
@@ -9,17 +10,16 @@ use aabb::*;
 use common::*;
 use device::Device;
 use geometry::*;
-use user_geometry::*;
 use ray::*;
 
 pub struct Scene {
     handle: SceneHandle,
-    geometries: VecMap<Geometry>,
+    geometries: VecMap<Box<dyn Geometry>>,
 }
 
 pub struct SceneBuilder {
     handle: SceneHandle,
-    geometries: VecMap<Geometry>,
+    geometries: VecMap<Box<dyn Geometry>>,
 }
 
 #[repr(C)]
@@ -63,21 +63,18 @@ impl SceneBuilder {
         }
     }
 
-    pub fn attach(&mut self, geometry: Geometry) -> GeomID {
-        let id = unsafe { rtcAttachGeometry(self.handle.ptr, geometry.handle().as_ptr()) };
+    pub fn attach<T: Geometry>(&mut self, geometry: T) -> GeomID {
+        let id = unsafe { rtcAttachGeometry(self.handle.ptr, geometry.handle().as_raw_ptr()) };
         assert!(!self.geometries.contains_key(id as usize), "Geometry id already assigned");
-        let geom_id = GeomID::new(id);
-        self.geometries.insert(id as usize, geometry);
-        geom_id
-    }
 
-    pub fn attach_user_geometry<T: UserPrimitive>(&mut self, geometry: BuiltUserGeometry<T>) -> GeomID {
-        let mut geometry = geometry.inner;
-        let id = unsafe { rtcAttachGeometry(self.handle.ptr, geometry.handle.as_ptr()) };
-        let geom_id = GeomID::new(id);
-        geometry.update_geom_id(geom_id);
-        self.geometries.insert(id as usize, Geometry::new(GeometryInternal::User(geometry.into_erased())));
-        geom_id
+        let mut boxed = Box::new(geometry);
+        boxed.set_geom_id(id);
+        boxed.bind_buffers();
+        boxed.handle_mut().commit();
+        let user_ptr = boxed.as_mut() as *mut T as *mut c_void;
+        unsafe { rtcSetGeometryUserData(boxed.handle().as_raw_ptr(), user_ptr); }
+        self.geometries.insert(id as usize, boxed as Box<dyn Geometry>);
+        GeomID::new(id)
     }
 
     pub fn set_build_quality(&mut self, quality: BuildQuality) {

@@ -1,6 +1,7 @@
 use std::ptr;
 use std::os::raw::{c_char, c_void};
 use std::ffi::CStr;
+use std::sync::atomic::{AtomicIsize, Ordering};
 
 use sys::*;
 
@@ -8,7 +9,7 @@ use error::*;
 
 pub fn set_flush_to_zero_mode() {
     #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
-    {
+    unsafe {
         #[cfg(target_arch = "x86_64")]
         use std::arch::x86_64::{_mm_setcsr, _mm_getcsr, _MM_FLUSH_ZERO_ON};
         #[cfg(target_arch = "x86")]
@@ -17,7 +18,7 @@ pub fn set_flush_to_zero_mode() {
         // Note: this flag requires the processor to support SSE3
         const _MM_DENORMALS_ZERO_ON: u32 = 0x0040;
 
-        unsafe { _mm_setcsr(_mm_getcsr() | _MM_FLUSH_ZERO_ON | _MM_DENORMALS_ZERO_ON); }
+        _mm_setcsr(_mm_getcsr() | _MM_FLUSH_ZERO_ON | _MM_DENORMALS_ZERO_ON);
     }
 }
 
@@ -29,11 +30,13 @@ impl Device {
     pub fn new() -> Self {
         let device = unsafe { rtcNewDevice(ptr::null()) };
         let err = unsafe { rtcGetDeviceError(ptr::null_mut()) };
-        assert!(err == RTC_ERROR_NONE);
+        if err != RTC_ERROR_NONE {
+            panic!("Embree device creation failed");
+        }
 
         unsafe {
             rtcSetDeviceErrorFunction(device, Some(error_callback), ptr::null_mut());
-            // rtcSetDeviceMemoryMonitorFunction(device, Some(memory_monitor_callback), ptr::null_mut());
+            rtcSetDeviceMemoryMonitorFunction(device, Some(memory_monitor_callback), ptr::null_mut());
         }
         Device { ptr: device }
     }
@@ -53,9 +56,16 @@ unsafe extern "C" fn error_callback(_user_ptr: *mut c_void, error: i32, str: *co
     error!("Embree error {}: {}", ErrorKind::from_i32(error), msg.to_string_lossy());
 }
 
-// unsafe extern "C" fn memory_monitor_callback(ptr: *mut c_void, bytes: isize, post: bool) -> bool {
-//     true
-// }
+// This breaks when there's more than one device. Could store Arc<AtomicIsize> in Device
+static DEVICE_MEMORY_USAGE: AtomicIsize = AtomicIsize::new(0);
+
+/// ptr: The provided payload when registering the callback
+/// bytes: Number of bytes allocated or deallocated
+/// post: Whether this callback was invoked before or after the (de)allocation took place
+unsafe extern "C" fn memory_monitor_callback(_ptr: *mut c_void, bytes: isize, _post: bool) -> bool {
+    DEVICE_MEMORY_USAGE.fetch_add(bytes, Ordering::SeqCst);
+    true
+}
 
 impl Clone for Device {
     fn clone(&self) -> Device {

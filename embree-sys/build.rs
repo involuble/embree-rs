@@ -16,21 +16,19 @@ use bindgen;
 
 #[cfg(feature = "bindgen")]
 fn generate_bindings(include_dir: PathBuf) -> Result<(), io::Error> {
+    // TODO: needs more options to match the pregenerated bindings
     let bindings_gen = bindgen::Builder::default()
-        .header(include_dir.join("embree3/rtcore.h"))
-        .clang_arg(format!("-IC:/Program Files (x86)/Windows Kits/10/Include/10.0.10240.0/ucrt"))
-        .clang_arg(format!("-IC:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/include"));
-        // .clang_arg(format!("-IC:/Program Files/LLVM/lib/clang/5.0.0/include"))
-        // .clang_arg(format!("-IC:/Program Files (x86)/Windows Kits/8.1/Include/shared"))
-        // .clang_arg(format!("-IC:/Program Files (x86)/Windows Kits/8.1/Include/um"));
+        .header(include_dir.join("embree3/rtcore.h"));
     let bindings = bindings_gen.generate()?;
 
     let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
     bindings.write_to_file(out_path.join("bindings.rs"))?;
+    Ok(())
 }
 
 #[cfg(not(feature = "bindgen"))]
 fn generate_bindings(_: PathBuf) -> Result<(), io::Error> {
+    // Just use the pregenerated bindings
     let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
     let crate_path = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
     fs::copy(crate_path.join("pregenerated_bindings.rs"), out_path.join("bindings.rs"))?;
@@ -46,7 +44,7 @@ fn try_load_from_directory(dir: PathBuf) -> Result<(), io::Error> {
     
     let bin_dir = dir.join("bin");
     let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
-    
+
     for dll in ["embree3.dll", "tbb.dll", "tbbmalloc.dll"].iter() {
         fs::copy(bin_dir.join(dll), out_path.join(dll))?;
     }
@@ -54,10 +52,11 @@ fn try_load_from_directory(dir: PathBuf) -> Result<(), io::Error> {
     println!("cargo:rustc-link-search={}", dir.join("lib").display());
 
     println!("cargo:rustc-link-search=native={}", out_path.display());
-    //println!("cargo:rustc-link-search=native={}", bin_dir.display());
     
     println!("cargo:rustc-link-lib=embree3");
 
+    // This might cause an issue if another library links to a different version of tbb
+    // Ideally there'd be a tbb-sys library that does the linking
     println!("cargo:rustc-link-lib=tbb");
     println!("cargo:rustc-link-lib=tbbmalloc");
 
@@ -74,9 +73,7 @@ fn main() {
 
         let r = try_load_from_directory(embree_dir);
 
-        if r.is_ok() {
-            return;
-        }
+        r.expect("Unable to find embree3 in EMBREE_DIR");
     }
 
     // #[cfg(all(feature = "vcpkg"), target_env = "msvc"))]
@@ -89,7 +86,7 @@ fn main() {
     //     return;
     // }
 
-    let pkg = pkg_config::Config::new().atleast_version("3.0.0").probe("embree");
+    let pkg = pkg_config::Config::new().atleast_version("3.4.0").probe("embree3");
     if let Ok(lib) = pkg {
         let include_dir = lib.include_paths[0].clone();
         generate_bindings(include_dir).expect("Could not generate bindings");

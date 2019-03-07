@@ -1,43 +1,23 @@
 use std::mem;
-use std::os::raw::c_void;
+use std::ffi::c_void;
 use std::u32;
 
 use sys::*;
 
 use device::Device;
 use common::*;
-use polygon_geometry::*;
-use user_geometry::*;
-use point_geometry::*;
 
-pub struct Geometry {
-    pub(crate) internal: GeometryInternal,
-}
+pub trait Geometry: Send + Sync + 'static {
+    fn handle(&self) -> &GeometryHandle;
+    fn handle_mut(&mut self) -> &mut GeometryHandle;
 
-pub(crate) enum GeometryInternal {
-    Triangles(TriangleMesh),
-    Quads(QuadMesh),
-    Spheres(SphereGeometry),
-    Discs(DiscGeometry),
-    User(ErasedUserGeometry),
-}
-
-impl Geometry {
-    pub(crate) fn new(geom: GeometryInternal) -> Self {
-        Geometry {
-            internal: geom,
-        }
+    fn set_build_quality(&mut self, quality: BuildQuality) {
+        self.handle_mut().set_build_quality(quality);
     }
 
-    pub fn handle(&self) -> &GeometryHandle {
-        match self.internal {
-            GeometryInternal::Triangles(ref t) => &t.handle,
-            GeometryInternal::Quads(ref q) => &q.handle,
-            GeometryInternal::Spheres(ref s) => &s.handle,
-            GeometryInternal::Discs(ref d) => &d.handle,
-            GeometryInternal::User(ref u) => &u.handle,
-        }
-    }
+    fn set_geom_id(&mut self, _id: u32) {}
+
+    fn bind_buffers(&mut self);
 }
 
 #[repr(C)]
@@ -47,19 +27,19 @@ pub struct GeometryHandle {
 
 impl GeometryHandle {
     pub(crate) fn new(device: &Device, geom_type: GeometryType) -> Self {
-        let h = unsafe { rtcNewGeometry(device.ptr, geom_type.into()) };
-        GeometryHandle { ptr: h }
+        let ptr = unsafe { rtcNewGeometry(device.ptr, geom_type.into()) };
+        GeometryHandle { ptr }
     }
 
-    pub(crate) fn as_ptr(&self) -> RTCGeometry {
+    pub(crate) fn as_raw_ptr(&self) -> RTCGeometry {
         self.ptr
     }
 
-    pub(crate) fn set_build_quality(&self, quality: BuildQuality) {
+    pub(crate) fn set_build_quality(&mut self, quality: BuildQuality) {
         unsafe { rtcSetGeometryBuildQuality(self.ptr, quality.into()); }
     }
 
-    // pub(crate) fn set_instance_transform(&self, transform: &cgmath::Matrix4<f32>) {
+    // pub(crate) fn set_instance_transform(&mut self, transform: &cgmath::Matrix4<f32>) {
     //     unsafe {
     //         rtcSetGeometryTransform(self.ptr, 0,
     //             cgmath::Matrix4::FORMAT.into(),
@@ -67,29 +47,37 @@ impl GeometryHandle {
     //     }
     // }
 
-    pub(crate) fn bind_shared_geometry_buffer<T>(&self, data: &mut Vec<T>, buf_type: BufferType, format: Format, slot: u32, byte_offset: usize) {
-        // TODO: This can reallocate and isn't safe
+    /// slot: slot is used as the time_step for a vertex buffer and the slot for a vertex attribute
+    pub(crate) unsafe fn bind_shared_geometry_buffer<T>(&mut self, data: &Vec<T>, buf_type: BufferType, format: Format, slot: u32, byte_offset: usize) {
+        // SSE 16 byte aligned reads are used for these buffers and thus they
+        //  must be padded so a read doesn't go past the end of the array
         if buf_type == BufferType::Vertex || buf_type == BufferType::VertexAttribute {
+            let required_padding;
             if mem::size_of::<T>() == 4 {
-                data.reserve(3);
+                required_padding = 3;
             } else if mem::size_of::<T>() % 16 == 0 {
-                // Do nothing
+                required_padding = 0;
             } else {
-                data.reserve(1);
+                required_padding = 1;
+            }
+            if data.capacity() - data.len() < required_padding {
+                warn!("Vertex and vertex attribute buffers require padding at the end");
             }
         }
         debug_assert!(byte_offset % 4 == 0, "offset must be 4 byte aligned");
         debug_assert!(mem::size_of::<T>() % 4 == 0, "stride must be 4 byte aligned");
-        unsafe {
-            rtcSetSharedGeometryBuffer(self.ptr,
-                buf_type.into(),
-                slot,
-                format.into(),
-                data.as_ptr() as *const c_void,
-                byte_offset,
-                mem::size_of::<T>(),
-                data.len());
-        }
+        rtcSetSharedGeometryBuffer(self.ptr,
+            buf_type.into(),
+            slot,
+            format.into(),
+            data.as_ptr() as *const c_void,
+            byte_offset,
+            mem::size_of::<T>(),
+            data.len());
+    }
+    
+    pub(crate) fn commit(&mut self) {
+        unsafe { rtcCommitGeometry(self.ptr); }
     }
 }
 

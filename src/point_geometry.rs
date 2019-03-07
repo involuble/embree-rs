@@ -1,11 +1,8 @@
 use cgmath::*;
 
-use sys::*;
-
 use common::*;
 use device::*;
 use geometry::*;
-use common::BuildQuality;
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -27,17 +24,22 @@ impl SphereGeometry {
             prims,
         }
     }
+}
 
-    pub fn set_build_quality(&self, quality: BuildQuality) {
-        self.handle.set_build_quality(quality);
+impl Geometry for SphereGeometry {
+    fn handle(&self) -> &GeometryHandle {
+        &self.handle
     }
 
-    pub fn build(mut self) -> Geometry {
-        self.handle.bind_shared_geometry_buffer(&mut self.prims, BufferType::Vertex, Format::f32x4, 0, 0);
+    fn handle_mut(&mut self) -> &mut GeometryHandle {
+        &mut self.handle
+    }
 
-        unsafe { rtcCommitGeometry(self.handle.ptr); }
-
-        Geometry::new(GeometryInternal::Spheres(self))
+    fn bind_buffers(&mut self) {
+        self.prims.reserve(1);
+        unsafe {
+            self.handle.bind_shared_geometry_buffer(&mut self.prims, BufferType::Vertex, Format::f32x4, 0, 0);
+        }
     }
 }
 
@@ -62,17 +64,22 @@ impl DiscGeometry {
             prims,
         }
     }
+}
 
-    pub fn set_build_quality(&self, quality: BuildQuality) {
-        self.handle.set_build_quality(quality);
+impl Geometry for DiscGeometry {
+    fn handle(&self) -> &GeometryHandle {
+        &self.handle
     }
 
-    pub fn build(mut self) -> Geometry {
-        self.handle.bind_shared_geometry_buffer(&mut self.prims, BufferType::Vertex, Format::f32x4, 0, 0);
-        self.handle.bind_shared_geometry_buffer(&mut self.prims, BufferType::Normal, Format::f32x3, 0, offset_of!(Disc, normal));
+    fn handle_mut(&mut self) -> &mut GeometryHandle {
+        &mut self.handle
+    }
 
-        unsafe { rtcCommitGeometry(self.handle.ptr); }
-
-        Geometry::new(GeometryInternal::Discs(self))
+    fn bind_buffers(&mut self) {
+        self.prims.reserve(1);
+        unsafe {
+            self.handle.bind_shared_geometry_buffer(&mut self.prims, BufferType::Vertex, Format::f32x4, 0, 0);
+            self.handle.bind_shared_geometry_buffer(&mut self.prims, BufferType::Normal, Format::f32x3, 0, offset_of!(Disc, normal));
+        }
     }
 }

@@ -82,7 +82,6 @@ pub struct $geometryname {
     pub vertices: Vec<Point3<f32>>,
     pub normals: Option<Vec<Vector3<f32>>>,
     pub tex_coords: Option<Vec<Vector2<f32>>>,
-    // pub attribs: Option<Vec<f32>>,
 }
 
 impl $geometryname {
@@ -94,7 +93,6 @@ impl $geometryname {
             vertices: vertex_buffer,
             normals: None,
             tex_coords: None,
-            // attribs: None,
         }
     }
 
@@ -105,10 +103,6 @@ impl $geometryname {
     pub fn set_texcoord_buffer(&mut self, buf: Vec<Vector2<f32>>) {
         self.tex_coords = Some(buf);
     }
-
-    // pub fn set_attrib_buffer(&mut self, buf: Vec<f32>) {
-    //     self.attribs = Some(buf);
-    // }
 
     pub fn transform_mesh(&mut self, transform: Matrix4<f32>) {
         for v in self.vertices.iter_mut() {
@@ -121,41 +115,43 @@ impl $geometryname {
             }
         }
     }
+}
 
-    pub fn set_build_quality(&self, quality: BuildQuality) {
-        self.handle.set_build_quality(quality);
+impl Geometry for $geometryname {
+    fn handle(&self) -> &GeometryHandle {
+        &self.handle
     }
 
-    pub fn build(mut self) -> Geometry {
+    fn handle_mut(&mut self) -> &mut GeometryHandle {
+        &mut self.handle
+    }
+
+    fn bind_buffers(&mut self) {
         let mut attrib_count = 0;
         if self.normals.is_some() { attrib_count = NORMALS_SLOT + 1; }
         if self.tex_coords.is_some() { attrib_count = UV_SLOT + 1; }
-        // if self.attribs.is_some() { attrib_count = 3; }
+
+        self.indices.reserve(1);
+        self.vertices.reserve(1);
         
-        self.handle.bind_shared_geometry_buffer(&mut self.indices, BufferType::Index, <$polygon>::FORMAT, 0, 0);
-        self.handle.bind_shared_geometry_buffer(&mut self.vertices, BufferType::Vertex, Format::f32x3, 0, 0);
+        unsafe {
+            self.handle.bind_shared_geometry_buffer(&mut self.indices, BufferType::Index, <$polygon>::FORMAT, 0, 0);
+            self.handle.bind_shared_geometry_buffer(&mut self.vertices, BufferType::Vertex, Format::f32x3, 0, 0);
 
-        unsafe { rtcSetGeometryVertexAttributeCount(self.handle.ptr, attrib_count); }
+            rtcSetGeometryVertexAttributeCount(self.handle.ptr, attrib_count);
 
-        if let Some(ref mut data) = self.normals {
-            self.handle.bind_shared_geometry_buffer(data, BufferType::VertexAttribute, Format::f32x3, NORMALS_SLOT, 0);
+            if let Some(ref mut data) = self.normals {
+                data.reserve(1);
+                self.handle.bind_shared_geometry_buffer(data, BufferType::VertexAttribute, Format::f32x3, NORMALS_SLOT, 0);
+            }
+            if let Some(ref mut data) = self.tex_coords {
+                data.reserve(1);
+                self.handle.bind_shared_geometry_buffer(data, BufferType::VertexAttribute, Format::f32x2, UV_SLOT, 0);
+            }
         }
-        if let Some(ref mut data) = self.tex_coords {
-            self.handle.bind_shared_geometry_buffer(data, BufferType::VertexAttribute, Format::f32x2, UV_SLOT, 0);
-        }
-        // if let Some(ref mut _data) = self.attribs {
-        //     // TODO
-        //     // self.handle.bind_shared_geometry_buffer(data, BufferType::VertexAttribute, Format::f32x3, 2, 0);
-        //     unimplemented!();
-        // }
-
-        unsafe { rtcCommitGeometry(self.handle.ptr); }
-
-        Geometry::new(GeometryInternal::$geometry_constructor(self))
     }
 }
-    )
-}
+)}
 
 polygon_geometry_def!(TriangleMesh, Triangle, Triangles);
 polygon_geometry_def!(QuadMesh, Quad, Quads);
