@@ -1,12 +1,9 @@
 use std::ffi::c_void;
-use std::f32;
 
 use sys::*;
 
-use cgmath::*;
 use vec_map::*;
 
-use aabb::*;
 use common::*;
 use device::Device;
 use geometry::*;
@@ -68,11 +65,14 @@ impl SceneBuilder {
         assert!(!self.geometries.contains_key(id as usize), "Geometry id already assigned");
 
         let mut boxed = Box::new(geometry);
+        
+        let user_ptr = boxed.as_mut() as *mut T as *mut c_void;
+        unsafe { rtcSetGeometryUserData(boxed.handle().as_raw_ptr(), user_ptr); }
+        
         boxed.set_geom_id(id);
         boxed.bind_buffers();
         boxed.handle_mut().commit();
-        let user_ptr = boxed.as_mut() as *mut T as *mut c_void;
-        unsafe { rtcSetGeometryUserData(boxed.handle().as_raw_ptr(), user_ptr); }
+        
         self.geometries.insert(id as usize, boxed as Box<dyn Geometry>);
         GeomID::new(id)
     }
@@ -113,31 +113,12 @@ impl SceneBuilder {
 // }
 
 // TODO: Could make new struct for this
-fn empty_intersect_context() -> RTCIntersectContext{
+fn empty_intersect_context() -> RTCIntersectContext {
     RTCIntersectContext {
         flags: 0,
         filter: None,
         instID: [INVALID_ID],
     }
-}
-
-#[repr(C)]
-#[repr(align(16))]
-struct RTCRayHitAligned {
-    pub ray: RTCRay,
-    pub hit: RTCHit,
-}
-
-#[repr(C)]
-#[repr(align(16))]
-struct RTCRayAligned {
-    pub ray: RTCRay,
-}
-
-#[repr(C)]
-#[repr(align(16))]
-struct RTCBoundsAligned {
-    pub bounds: RTCBounds,
 }
 
 // struct GeometryQueryHandle<'a> {
@@ -150,53 +131,29 @@ struct RTCBoundsAligned {
 // }
 
 impl Scene {
-    pub fn bounds(&self) -> AABB {
-        let mut b = RTCBoundsAligned { bounds: AABB::zero().into() };
-        unsafe { rtcGetSceneBounds(self.handle.ptr, &mut b.bounds); }
-        b.bounds.into()
+    pub fn bounds(&self) -> Bounds {
+        let mut b = Bounds::zero();
+        unsafe { rtcGetSceneBounds(self.handle.ptr, b.as_raw_ptr()); }
+        b
     }
 
-    pub fn intersect(&self, ray: Ray) -> Hit {
+    pub fn intersect(&self, rayhit: &mut RayHit) {
         let mut context: RTCIntersectContext = empty_intersect_context();
-        let mut rayhit = RTCRayHitAligned {
-            ray: ray.into(),
-            hit: RTCHit {
-                Ng_x: 0.0,
-                Ng_y: 0.0,
-                Ng_z: 0.0,
-                u: 0.0,
-                v: 0.0,
-                geomID: INVALID_ID,
-                primID: INVALID_ID,
-                instID: [INVALID_ID],
-            }
-        };
         unsafe {
             rtcIntersect1(self.handle.as_ptr(),
                 &mut context,
-                &mut rayhit as *mut RTCRayHitAligned as *mut RTCRayHit);
-        }
-        Hit {
-            Ng: Vector3::new(rayhit.hit.Ng_x, rayhit.hit.Ng_y, rayhit.hit.Ng_z).normalize(),
-            uv: Vector2::new(rayhit.hit.u, rayhit.hit.v),
-            geom_id: GeomID::new(rayhit.hit.geomID),
-            prim_id: GeomID::new(rayhit.hit.primID),
-            t: rayhit.ray.tfar,
-            // instance_id: GeomID::new(rayhit.hit.instID[0]),
+                rayhit.as_raw_ptr());
         }
     }
 
-    pub fn occluded(&self, ray: Ray) -> bool {
-        let mut r = RTCRayAligned {
-            ray: ray.into(),
-        };
+    pub fn occluded(&self, ray: &mut Ray) -> bool {
         let mut context: RTCIntersectContext = empty_intersect_context();
         unsafe {
             rtcOccluded1(self.handle.as_ptr(),
                 &mut context,
-                &mut r.ray);
+                ray as *mut Ray as *mut RTCRay);
         }
-        r.ray.tfar == f32::NEG_INFINITY
+        ray.tfar == std::f32::NEG_INFINITY
     }
 
     // fn query(&self, id: GeomID) -> GeometryQueryHandle<'_> {

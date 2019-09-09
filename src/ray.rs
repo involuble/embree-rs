@@ -7,12 +7,17 @@ use cgmath::*;
 use common::GeomID;
 
 #[repr(C)]
+#[repr(align(16))]
 #[derive(Debug, Copy, Clone)]
 pub struct Ray {
     pub origin: Point3<f32>,
     pub tnear: f32,
     pub dir: Vector3<f32>,
+    time: f32,
     pub tfar: f32,
+    mask: u32,
+    id: u32,
+    flags: u32,
 }
 
 impl Ray {
@@ -23,7 +28,11 @@ impl Ray {
             origin: origin,
             tnear: tnear,
             dir: dir,
+            time: 0.0,
             tfar: tfar,
+            mask: u32::MAX,
+            id: 0,
+            flags: 0,
         }
     }
 
@@ -36,46 +45,29 @@ impl Ray {
     }
 }
 
-impl Into<RTCRay> for Ray {
-    fn into(self) -> RTCRay {
-        RTCRay {
-            org_x: self.origin.x,
-            org_y: self.origin.y,
-            org_z: self.origin.z,
-            tnear: self.tnear,
-            dir_x: self.dir.x,
-            dir_y: self.dir.y,
-            dir_z: self.dir.z,
-            time: 0.0,
-            tfar: self.tfar,
-            mask: u32::MAX,
-            id: 0,
-            flags: 0,
-        }
-    }
-}
-
-impl From<RTCRay> for Ray {
-    fn from(ray: RTCRay) -> Self {
-        Ray {
-            origin: Point3::new(ray.org_x, ray.org_y, ray.org_z),
-            tnear: ray.tnear,
-            dir: Vector3::new(ray.dir_x, ray.dir_y, ray.dir_z),
-            tfar: ray.tfar,
-        }
-    }
+#[test]
+fn test_ray_layout() {
+    assert_eq!(std::mem::size_of::<Ray>(), std::mem::size_of::<RTCRay>());
+    assert_eq!(offset_of!(Ray, origin.x), offset_of!(RTCRay, org_x));
+    assert_eq!(offset_of!(Ray, tnear), offset_of!(RTCRay, tnear));
+    assert_eq!(offset_of!(Ray, dir.x), offset_of!(RTCRay, dir_x));
+    assert_eq!(offset_of!(Ray, time), offset_of!(RTCRay, time));
+    assert_eq!(offset_of!(Ray, tfar), offset_of!(RTCRay, tfar));
+    assert_eq!(offset_of!(Ray, mask), offset_of!(RTCRay, mask));
+    assert_eq!(offset_of!(Ray, id), offset_of!(RTCRay, id));
+    assert_eq!(offset_of!(Ray, flags), offset_of!(RTCRay, flags));
 }
 
 #[repr(C)]
+#[repr(align(16))]
 #[derive(Debug, Copy, Clone)]
 #[allow(non_snake_case)]
 pub struct Hit {
     pub Ng: Vector3<f32>,
     pub uv: Vector2<f32>,
-    pub geom_id: GeomID,
     pub prim_id: GeomID,
-    pub t: f32,
-    // pub instance_id: GeomID,
+    pub geom_id: GeomID,
+    pub inst_id: GeomID,
 }
 
 impl Hit {
@@ -85,12 +77,36 @@ impl Hit {
             uv: Vector2::zero(),
             geom_id: GeomID::invalid(),
             prim_id: GeomID::invalid(),
-            t: 0.0,
-            // instance_id: GeomID::invalid(),
+            inst_id: GeomID::invalid(),
         }
     }
 
     pub fn is_hit(&self) -> bool {
         !self.geom_id.is_invalid()
+    }
+}
+
+#[test]
+fn test_hit_layout() {
+    assert_eq!(std::mem::size_of::<Hit>(), std::mem::size_of::<RTCHit>());
+    assert_eq!(offset_of!(Hit, Ng.x), offset_of!(RTCHit, Ng_x));
+    assert_eq!(offset_of!(Hit, uv.x), offset_of!(RTCHit, u));
+    assert_eq!(offset_of!(Hit, uv.y), offset_of!(RTCHit, v));
+    assert_eq!(offset_of!(Hit, geom_id), offset_of!(RTCHit, geomID));
+    assert_eq!(offset_of!(Hit, prim_id), offset_of!(RTCHit, primID));
+    assert_eq!(offset_of!(Hit, inst_id), offset_of!(RTCHit, instID));
+}
+
+#[repr(C)]
+#[repr(align(16))]
+#[derive(Debug, Copy, Clone)]
+pub struct RayHit {
+    pub ray: Ray,
+    pub hit: Hit,
+}
+
+impl RayHit {
+    pub fn as_raw_ptr(&mut self) -> *mut RTCRayHit {
+        self as *mut RayHit as *mut RTCRayHit
     }
 }

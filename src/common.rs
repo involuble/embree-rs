@@ -1,17 +1,19 @@
 use std::u32;
 
+use cgmath::*;
+
 use sys::*;
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct GeomID {
-    id: u32,
+    pub id: u32,
 }
 
 pub const INVALID_ID: u32 = u32::MAX;
 
 impl GeomID {
-    pub(crate) fn new(id: u32) -> Self {
+    pub fn new(id: u32) -> Self {
         GeomID { id: id }
     }
 
@@ -29,6 +31,52 @@ impl GeomID {
         debug_assert!(!self.is_invalid());
         self.id
     }
+}
+
+impl From<u32> for GeomID {
+    fn from(id: u32) -> GeomID {
+        GeomID::new(id)
+    }
+}
+
+#[repr(C)]
+#[repr(align(16))]
+#[derive(Debug, Copy, Clone)]
+pub struct Bounds {
+    pub lower: Point3<f32>,
+    align0: f32,
+    pub upper: Point3<f32>,
+    align1: f32,
+}
+
+impl Bounds {
+    pub fn zero() -> Self {
+        Bounds {
+            lower: Point3::origin(),
+            align0: 0.0,
+            upper: Point3::origin(),
+            align1: 0.0,
+        }
+    }
+
+    pub fn new(lower: Point3<f32>, upper: Point3<f32>) -> Self {
+        Bounds {
+            lower: lower,
+            align0: 0.0,
+            upper: upper,
+            align1: 0.0,
+        }
+    }
+
+    pub fn as_raw_ptr(&mut self) -> *mut RTCBounds {
+        self as *mut Bounds as *mut RTCBounds
+    }
+}
+
+#[test]
+fn test_bounds_layout() {
+    assert_eq!(std::mem::size_of::<Bounds>(), std::mem::size_of::<RTCBounds>());
+    assert_eq!(offset_of!(Bounds, upper.x), offset_of!(RTCBounds, upper_x));
 }
 
 macro_rules! into_primitive {

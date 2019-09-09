@@ -7,15 +7,14 @@ use cgmath::*;
 
 use sys::*;
 
-use aabb::*;
-// use common::*;
+use common::*;
 use device::*;
 use geometry::*;
 use ray::*;
 
 pub trait UserPrimitive: 'static + Send + Sync {
     fn intersect(&self, ray: &Ray) -> UserPrimHit;
-    fn bounds(&self) -> AABB;
+    fn bounds(&self) -> Bounds;
 
     // TODO: Maybe expose this for convenience?
     // fn transform_by(&mut self, mat: Matrix4);
@@ -81,7 +80,7 @@ impl<T: UserPrimitive> Geometry for UserGeometry<T> {
     fn bind_buffers(&mut self) {
         assert!(self.prims.len() <= u32::MAX as usize);
 
-        // Pass the array as user_ptr
+        // Pass self as user_ptr
         let user_ptr = self as *const UserGeometry<T> as *mut c_void;
         unsafe {
             let handle = self.handle.as_raw_ptr();
@@ -95,7 +94,7 @@ impl<T: UserPrimitive> Geometry for UserGeometry<T> {
 }
 
 unsafe extern "C" fn bounds_func<T: UserPrimitive>(args: *const RTCBoundsFunctionArguments) {
-    // If the userPtr = &[T] then do this
+    // If the userPtr = &[T] then do this to retrieve a primitive
     // let data_ptr = (*args).geometryUserPtr as *const T;
     // let prim_ptr = data_ptr.offset((*args).primID as isize);
 
@@ -105,7 +104,7 @@ unsafe extern "C" fn bounds_func<T: UserPrimitive>(args: *const RTCBoundsFunctio
 
     let prim: &T = &geometry.prims[(*args).primID as usize];
 
-    ptr::write((*args).bounds_o, prim.bounds().into());
+    ptr::write((*args).bounds_o as *mut Bounds, prim.bounds());
 }
 
 unsafe extern "C" fn intersect_func<T: UserPrimitive>(args: *const RTCIntersectFunctionNArguments) {
@@ -116,29 +115,25 @@ unsafe extern "C" fn intersect_func<T: UserPrimitive>(args: *const RTCIntersectF
     debug_assert!((*args).N == 1);
     if *(*args).valid == 0 { return; }
 
-    let rayhit = (*args).rayhit as *mut RTCRayHit;
+    let rayhit = (*args).rayhit as *mut RTCRayHit as *mut RayHit;
+    let rayhit = &mut *rayhit;
 
-    // let rtcray: &mut RTCRay = &mut (*rayhit).ray;
-    let hit: &mut RTCHit = &mut (*rayhit).hit;
-
-    let ray: Ray = (*rayhit).ray.into();
+    let ray = &mut rayhit.ray;
+    let hit = &mut rayhit.hit;
 
     // TODO: need to expose a way to call rtcFilterIntersection (possibly by passing a closure in)
-    let prim_hit = prim.intersect(&ray);
+    let prim_hit = prim.intersect(ray);
 
     if prim_hit.t >= ray.tnear {
         // The UserPrimitive intersect function should make sure the below invariant holds
         //  but check it anyways. This could be turned into a runtime check instead of an assert
         debug_assert!(ray.in_range(prim_hit.t), "Intersect function returning distance out of ray bounds");
-        (*rayhit).ray.tfar = prim_hit.t;
-        hit.Ng_x = prim_hit.Ng.x;
-        hit.Ng_y = prim_hit.Ng.y;
-        hit.Ng_z = prim_hit.Ng.z;
-        hit.u = prim_hit.uv.x;
-        hit.v = prim_hit.uv.y;
-        hit.primID = (*args).primID;
-        hit.geomID = geometry.id;
-        hit.instID = (*(*args).context).instID;
+        ray.tfar = prim_hit.t;
+        hit.Ng = prim_hit.Ng;
+        hit.uv = prim_hit.uv;
+        hit.prim_id = (*args).primID.into();
+        hit.geom_id = geometry.id.into();
+        hit.inst_id = (*(*args).context).instID[0].into();
     }
 }
 

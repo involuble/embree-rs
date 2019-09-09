@@ -37,12 +37,12 @@ impl Camera {
     }
 }
 
-pub struct Sphere {
+pub struct UserSphere {
     pub center: Point3<f32>,
     pub radius: f32,
 }
 
-impl UserPrimitive for Sphere {
+impl UserPrimitive for UserSphere {
     fn intersect(&self, ray: &Ray) -> UserPrimHit {
         let v = ray.origin - self.center;
 
@@ -76,8 +76,8 @@ impl UserPrimitive for Sphere {
         UserPrimHit::miss()
     }
 
-    fn bounds(&self) -> AABB {
-        AABB::new(
+    fn bounds(&self) -> Bounds {
+        Bounds::new(
             self.center - Vector3::new(self.radius, self.radius, self.radius),
             self.center + Vector3::new(self.radius, self.radius, self.radius))
     }

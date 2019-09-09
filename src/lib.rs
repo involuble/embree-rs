@@ -12,7 +12,6 @@ extern crate embree_sys as sys;
 #[macro_use]
 mod common;
 
-mod aabb;
 mod device;
 mod scene;
 mod error;
@@ -22,8 +21,7 @@ mod polygon_geometry;
 mod ray;
 mod user_geometry;
 
-pub use aabb::*;
-pub use common::{BuildQuality, GeomID};
+pub use common::{Bounds, BuildQuality, GeomID};
 pub use device::*;
 pub use scene::*;
 pub use error::*;

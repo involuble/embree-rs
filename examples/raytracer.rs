@@ -83,13 +83,13 @@ pub fn build_scene(device: &Device) -> Scene {
     let plane_i = vec![Triangle::new(0, 1, 2), Triangle::new(1, 3, 2)];
 
     let plane = TriangleMesh::new(device, plane_i, plane_v);
-    scene.attach(plane.build());
+    scene.attach(plane);
 
     let cube = TriangleMesh::new(device, Vec::from(CUBE_INDICES.as_ref()), Vec::from(CUBE_VERTICES.as_ref()));
-    let _ = scene.attach(cube.build());
+    scene.attach(cube);
 
-    let sphere = UserGeometry::new_realloc(device, vec![Sphere { center: Point3::new(-3.0, 0.0, 0.0), radius: 1.0 }]);
-    scene.attach_user_geometry(sphere.build());
+    let sphere = UserGeometry::new(device, vec![UserSphere { center: Point3::new(-3.0, 0.0, 0.0), radius: 1.0 }]);
+    scene.attach(sphere);
 
     scene.set_build_quality(BuildQuality::Medium);
     scene.set_flags(SceneFlags::ROBUST | SceneFlags::COMPACT);
@@ -106,17 +106,27 @@ pub fn render_scene(buffer: &mut Vec<u32>, scene: &Scene, camera: &Camera) {
         let x = (x as f32 + 0.5) / (WIDTH as f32);
         let y = (y as f32 + 0.5) / (HEIGHT as f32);
 
-        let ray = camera.get_ray(x, y);
-        let hit = scene.intersect(ray);
+        let mut rayhit = RayHit {
+            ray: camera.get_ray(x, y),
+            hit: Hit::empty(),
+        };
+        scene.intersect(&mut rayhit);
+        let ray = rayhit.ray;
+        let hit = rayhit.hit;
         if hit.is_hit() {
-            let hit_pos = ray.point_at_dist(hit.t);
+            let hit_pos = ray.point_at_dist(ray.tfar);
 
-            let shadow_ray = Ray::new(hit_pos, sun_dir, 1e-5, f32::MAX);
-            let shadow_hit = scene.intersect(shadow_ray);
+            let mut shadow_rayhit = RayHit {
+                ray: Ray::new(hit_pos, sun_dir, 1e-4, f32::MAX),
+                hit: Hit::empty(),
+            };
+            scene.intersect(&mut shadow_rayhit);
+            let shadow_hit = shadow_rayhit.hit;
+
             let shadowing = if shadow_hit.is_hit() { 0.0 } else { 1.0 };
-
             let lighting: f32 = AMBIENT + shadowing * (1.0 - AMBIENT) * clamp(dot(hit.Ng, sun_dir), 0.0, 1.0);
             debug_assert!(lighting <= 1.0);
+
             let colour = COLOURS[hit.geom_id.unwrap() as usize] * lighting;
             *value = colour.to_rgba8();
         }
